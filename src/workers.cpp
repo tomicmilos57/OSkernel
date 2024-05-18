@@ -38,6 +38,10 @@ void workerBodyB(){
         }
     }
 }
+
+void test(){
+  printString("C: TEST INSIDE\n");
+}
 void workerBodyC() {
   uint8 i = 0;
   for (; i < 3; i++) {
@@ -53,6 +57,18 @@ void workerBodyC() {
   printString("C: t1=");
   printInteger(t1);
   printString("\n");
+  //printString("C: EXITING\n");
+  //TCB::thread_exit();
+  printString("C: TEST BEFORE\n");
+  TCB::time_sleep(200);
+  TCB* testtcb = TCB::createThread(test);
+  //TCB::time_sleep(100);
+  printString("C: TEST RIGHT AFTER\n");
+  while (!testtcb->isFinished()) {
+        TCB::yield();
+  }
+  //TCB::time_sleep(100);
+  printString("C: TEST AFTER AFTER\n");
   uint64 result = fibonacci(12);
   printString("C: fibonaci=");
   printInteger(result);

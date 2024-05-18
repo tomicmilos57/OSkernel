@@ -11,15 +11,16 @@ private:
     Elem(T *data, Elem *next) : data(data), next(next) {}
   };
   Elem *head, *tail;
-
+  uint64 n;
 public:
   List() : head(0), tail(0) {}
   List(const List<T> &) = delete;
   List<T> &operator=(const List<T> &) = delete;
-
+  uint64 getNumOfElem(){ return n; }
   void addFirst(T *data) {
     Elem *elem = new Elem(data, head);
     head = elem;
+    n++;
     if (!tail) {
       tail = head;
     }
@@ -32,6 +33,7 @@ public:
     } else {
       head = tail = elem;
     }
+    n++;
   }
   T *removeFirst() {
     if (!head) {
@@ -42,6 +44,7 @@ public:
     if (!head) {
       tail = 0;
     }
+    n--;
     T *ret = elem->data;
     delete elem;
     return ret;
@@ -67,7 +70,7 @@ public:
       head = 0;
     }
     tail = prev;
-
+    n--;
     T *ret = elem->data;
     delete elem;
     return ret;

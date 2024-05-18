@@ -20,10 +20,30 @@ void TCB::dispatch() {
 
     TCB::contextSwitch(&old->context, &running->context);
 }
+void TCB::dispatchSleep() {
+    TCB *old = running;
 
+    Scheduler::putSleep(old);
+
+    running = Scheduler::get();
+
+    TCB::contextSwitch(&old->context, &running->context);
+}
 void TCB::threadWrapper() {
     Riscv::popSppSpie();
     running->body();
     running->setFinished(true);
     TCB::yield();
+}
+
+void TCB::thread_exit(){
+    running->setFinished(true); // Also can running = Scheduler::get(); TCB::contextSwitch...;
+    TCB::yield();
+}
+#include "../h/print.hpp"
+#include "../h/riscv.hpp"
+int TCB::time_sleep (time_t t){
+    running->sleeping = t;
+    TCB::yield();
+    return 0;
 }
