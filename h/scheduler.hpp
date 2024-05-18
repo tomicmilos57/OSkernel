@@ -17,6 +17,7 @@ public:
   static TCB *getSleep();
   static void putSleep(TCB *ccb);
   static uint64 getNumOfSleep();
+  static TCB* idle;
 };
 
 #endif

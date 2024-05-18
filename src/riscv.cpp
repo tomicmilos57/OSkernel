@@ -42,7 +42,7 @@ void Riscv::handleSupervisorTrap() {
     } else if (scause == 0x8000000000000009UL) {//interrupt, supervisor external interrupt (console)
         console_handler();
     } else { //unexpected trap cause
-        printString("Unexpected trap cause\n");
+        /*printString("Unexpected trap cause\n");
         //print scause
         printString("Scause: ");
         printInteger(r_scause());
@@ -54,6 +54,6 @@ void Riscv::handleSupervisorTrap() {
         //print stval
         printString("Stval: ");
         printInteger(r_stval());
-        printString("\n");
+        printString("\n");*/
     }
 }

@@ -26,6 +26,8 @@ public:
     //using Body = void (*)();
 
     static TCB *createThread(Body body);
+    static TCB *createIdleThread(Body body);
+
     bool isFinished() const { return finished; }
     void setFinished(bool f) { TCB::finished = f; }
     uint64 getTimeSlice() const { return timeSlice; }
@@ -50,7 +52,12 @@ private:
             Scheduler::put(this);
         }
     }
-
+    TCB(Body body, uint64 timeSlice, bool put)
+            : body(body), stack(body != nullptr ? new uint64[STACK_SIZE] : nullptr),
+              context({(uint64) &threadWrapper,
+                       stack != nullptr ? (uint64) &stack[STACK_SIZE] : 0}),
+              timeSlice(timeSlice),
+              finished(false) {}
     friend class Riscv;
     static void threadWrapper();
     static void contextSwitch(Context *, Context *);

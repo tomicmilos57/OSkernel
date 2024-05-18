@@ -4,5 +4,5 @@
 // Vezbe 7
 extern void printString(char const *string);
 extern void printInteger(uint64 integer);
-
+extern void printLine(char const *string, uint64 integer);
 #endif

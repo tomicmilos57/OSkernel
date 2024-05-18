@@ -36,3 +36,8 @@ void printInteger(uint64 integer) {
         __putc(buf[i]);
     Riscv::ms_sstatus(sstatus & Riscv::SSTATUS_SIE ? Riscv::SSTATUS_SIE : 0);
 }
+void printLine(char const *string, uint64 integer){
+    printString(string);
+    printInteger(integer);
+    printString("\n");
+}
