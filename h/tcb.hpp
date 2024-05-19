@@ -59,6 +59,7 @@ private:
               timeSlice(timeSlice),
               finished(false) {}
     friend class Riscv;
+    friend class Semaphore;
     static void threadWrapper();
     static void contextSwitch(Context *, Context *);
 };

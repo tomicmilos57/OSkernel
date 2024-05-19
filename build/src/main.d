@@ -1,8 +1,9 @@
-build/src/main.o: src/main.cpp src/../h/ccb.hpp src/../h/../lib/hw.h \
+build/src/main.o: src/main.cpp src/../h/tcb.hpp src/../h/../lib/hw.h \
  src/../h/scheduler.hpp src/../h/list.hpp src/../h/print.hpp \
- src/../h/workers.hpp
+ src/../h/workers.hpp src/../h/riscv.hpp src/../h/semaphore.hpp \
+ src/../h/../h/list.hpp src/../lib/console.h
 
-src/../h/ccb.hpp:
+src/../h/tcb.hpp:
 
 src/../h/../lib/hw.h:
 
@@ -13,3 +14,11 @@ src/../h/list.hpp:
 src/../h/print.hpp:
 
 src/../h/workers.hpp:
+
+src/../h/riscv.hpp:
+
+src/../h/semaphore.hpp:
+
+src/../h/../h/list.hpp:
+
+src/../lib/console.h:
