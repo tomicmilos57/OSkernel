@@ -2,18 +2,18 @@
 #include "../h/print.hpp"
 #include "../h/workers.hpp"
 #include "../h/riscv.hpp"
+#include "../lib/console.h"
 void empty(){ while(1){printString("Idle\n");} }
-int main1() {
-    Riscv::w_stvec((uint64) &Riscv::supervisorTrap);
-    Riscv::ms_sstatus(Riscv::SSTATUS_SIE);
+int main() {
     
+    Riscv::ms_sstatus(Riscv::SSTATUS_SIE);
     TCB *coroutines[5];
     coroutines[0] = TCB::createThread(nullptr);
     printLine("MainThread created: ", (uint64)coroutines[0]);
     TCB::running = coroutines[0];
     Scheduler::idle = TCB::createIdleThread(empty);
     printLine("IdleThread created: ", (uint64)Scheduler::idle);
-
+    Riscv::w_stvec((uint64) &Riscv::supervisorTrap);
     coroutines[1] = TCB::createThread(workerBodyA);
     printLine("ThreadA created: ", (uint64)coroutines[1]);
     coroutines[2] = TCB::createThread(workerBodyB);
@@ -29,7 +29,7 @@ int main1() {
     coroutines[3]->isFinished()&&
     coroutines[4]->isFinished())) {
         TCB::time_sleep(300);
-        //TCB::yield();
+        //TCB::yield(); thread_dispatch(){ yield(); }
     }
     for (auto &coroutine: coroutines) {
         delete coroutine;
@@ -43,26 +43,27 @@ int main1() {
 
 Semaphore *sem1;
 Semaphore *sem2;
-#include "../lib/console.h"
+
 void seminc(){
     for (uint64 i = 0; i < 10; i++) {
         TCB::time_sleep(10);
-        sem1->sem_wait();
+        sem1->wait();
         __putc('A');
         __putc('\n');
-        sem2->sem_signal();
+        sem2->signal();
     }
 }
 
 void semdec(){
     for (uint64 i = 0; i < 10; i++) {
-        sem2->sem_wait();
+        sem2->wait();
         __putc('B');
         __putc('\n');
-        sem1->sem_signal();
+        sem1->signal();
     }  
 }
-int main(){
+
+int main3(){
     __putc('S');
     __putc('\n');
     Riscv::w_stvec((uint64) &Riscv::supervisorTrap);
@@ -100,16 +101,5 @@ int main(){
         delete coroutine;
     }
     printString("Finished\n");
-    return 0;
-}
-int main3(){
-    __putc('S');
-    __putc('\n');
-    Riscv::w_stvec((uint64) &Riscv::supervisorTrap);
-    __putc('S');
-    __putc('\n');
-    Riscv::ms_sstatus(Riscv::SSTATUS_SIE);
-    __putc('S');
-    __putc('\n');
     return 0;
 }

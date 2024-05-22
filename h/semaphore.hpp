@@ -8,21 +8,21 @@ private:
     int val;
     List<TCB> blockedQueue;
 protected:
-    void sem_block();
-    void sem_unblock();
+    void block();
+    void unblock();
     void putBlock(TCB *tcb);
     TCB *getBlock();
 public:
     Semaphore(int init = 1) : val(init) {}
     int value() const { return val; } //maybe unnecessary
     ~Semaphore() = default;
-public://uint64 insted of int?
+public:
     //int sem_open(int init);
-    int sem_close();
-    void sem_wait();
-    void sem_signal();
-    int sem_timedwait(time_t timeout);
-    int sem_trywait();
+    int close();
+    void wait();
+    void signal();
+    //void timedwait(time_t timeout);//should be implemented in C API
+    //int trywait(); C API
 };
 
 

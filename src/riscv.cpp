@@ -6,14 +6,15 @@
 
 void Riscv::popSppSpie() {
     __asm__ volatile("csrw sepc, ra");
+    mc_sstatus(SSTATUS_SPP);//clear sstatus na nulu tj spp
     __asm__ volatile("sret");
 }
 
 void Riscv::handleSupervisorTrap() {
     uint64 scause = r_scause();
     if (scause == 0x0000000000000009UL) { //ecall
-        uint64 sepc = r_sepc() + 4; //ecall return to its address
-        uint64 sstatus = r_sstatus();
+        uint64 volatile sepc = r_sepc() + 4; //ecall return to its address
+        uint64 volatile sstatus = r_sstatus();
         TCB::timeSLiceCounter = 0;
         if(TCB::running->sleeping > 0) TCB::dispatchSleep();
         else TCB::dispatch();
@@ -30,8 +31,8 @@ void Riscv::handleSupervisorTrap() {
         }
 
         if (TCB::timeSLiceCounter >= TCB::running->getTimeSlice()) {
-            uint64 sepc = r_sepc();
-            uint64 sstatus = r_sstatus();
+            uint64 volatile sepc = r_sepc();
+            uint64 volatile sstatus = r_sstatus();
             TCB::timeSLiceCounter = 0;
             TCB::dispatch();
             w_sstatus(sstatus);
