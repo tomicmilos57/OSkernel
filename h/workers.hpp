@@ -6,4 +6,5 @@ extern void workerBodyA();
 extern void workerBodyB();
 extern void workerBodyC();
 extern void workerBodyD();
+extern void myMain();
 #endif

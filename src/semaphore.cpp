@@ -4,10 +4,10 @@
 //int Semaphore::sem_open(int init){}
 
 
-void Semaphore::putBlock(TCB *tcb){blockedQueue.addLast(tcb);}
-TCB *Semaphore::getBlock(){return blockedQueue.removeFirst();}
+void Sem::putBlock(TCB *tcb){blockedQueue.addLast(tcb);}
+TCB *Sem::getBlock(){return blockedQueue.removeFirst();}
 
-void Semaphore::block(){
+void Sem::block(){
     TCB *old = TCB::running;
 
     putBlock(old);
@@ -17,22 +17,22 @@ void Semaphore::block(){
 
     TCB::contextSwitch(&old->context, &TCB::running->context);
 }
-void Semaphore::unblock(){
+void Sem::unblock(){
     TCB* blocked = getBlock();
     Scheduler::put(blocked);
 }
 
-void Semaphore::wait(){
+void Sem::wait(){
     //lock
     if(--val < 0) block();
     //unlock
 }
-void Semaphore::signal(){
+void Sem::signal(){
     //lock
     if(++val <= 0) unblock();
     //unlock
 }
-int Semaphore::close(){
+int Sem::close(){
     while(blockedQueue.getNumOfElem() > 0){
         TCB* thread = getBlock();
         Scheduler::put(thread);

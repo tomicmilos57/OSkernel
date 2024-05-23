@@ -3,6 +3,15 @@
 #include "../h/tcb.hpp"
 #include "../h/print.hpp"
 #include "../lib/hw.h"
+#include "../h/syscall_c.hpp"
+
+
+void myMain(){
+
+}
+
+
+
 
 static uint64 fibonacci(uint64 n) {
     if (n == 0 || n == 1) {
@@ -14,7 +23,7 @@ static uint64 fibonacci(uint64 n) {
 }
 
 void workerBodyA() {
-    TCB::time_sleep(50);
+    //TCB::time_sleep(50);
     for (uint64 i = 0; i < 10; i++) {
         printString("A: i=");
         printInteger(i);
@@ -28,7 +37,7 @@ void workerBodyA() {
 }
 
 void workerBodyB() {
-    TCB::time_sleep(100);
+    //TCB::time_sleep(100);
     for (uint64 i = 0; i < 16; i++) {
         printString("B: i=");
         printInteger(i);
@@ -46,7 +55,7 @@ void test() {
 }
 
 void workerBodyC() {
-    TCB::time_sleep(150);
+    //TCB::time_sleep(150);
     uint8 i = 0;
     for (; i < 3; i++) {
         printString("C: i=");
@@ -86,7 +95,7 @@ void workerBodyC() {
 }
 
 void workerBodyD() {
-    TCB::time_sleep(200);
+    //TCB::time_sleep(200);
     uint8 i = 10;
     for (; i < 13; i++) {
         printString("D: i=");

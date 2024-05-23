@@ -1,0 +1,16 @@
+#include "../h/syscall_cpp.hpp"
+#include "../lib/mem.h"
+void *operator new(size_t n) { return __mem_alloc(n); }
+void *operator new[](size_t n) { return __mem_alloc(n); }
+void operator delete(void *n) { __mem_free(n); }
+void operator delete[](void *n) { __mem_free(n); }
+Thread::Thread(void (*body)(void *), void *arg) : body(body), arg(arg) {}
+int Thread::start(){ return thread_create(&myHandle, body, arg); }
+void Thread::dispatch() { thread_dispatch(); }
+int Thread::sleep(time_t time) { return time_sleep(time); }
+Thread::~Thread(){ } //delete
+
+Semaphore::Semaphore(unsigned init){ sem_open(&myHandle, init); }
+Semaphore::~Semaphore(){ sem_close(myHandle); }
+int Semaphore::wait(){ return sem_wait(myHandle); }
+int Semaphore::signal() { return sem_signal(myHandle); }

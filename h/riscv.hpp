@@ -69,10 +69,16 @@ public:
 
     static void supervisorTrap();
 
+    static uint64 read_ret();
 private:
     static void handleSupervisorTrap();
 };
 
+inline uint64 Riscv::read_ret() {
+    uint64 volatile ret;
+    __asm__ volatile("mv %0, a0" : "=r" (ret));
+    return ret;
+}
 inline uint64 Riscv::r_scause() {
     uint64 volatile scause;
     __asm__ volatile("csrr %[scause], scause" : [scause] "=r"(scause));

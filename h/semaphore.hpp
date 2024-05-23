@@ -3,7 +3,7 @@
 #include "../lib/hw.h"
 #include "../h/list.hpp"
 class TCB;
-class Semaphore{
+class Sem{
 private:
     int val;
     List<TCB> blockedQueue;
@@ -13,9 +13,9 @@ protected:
     void putBlock(TCB *tcb);
     TCB *getBlock();
 public:
-    Semaphore(int init = 1) : val(init) {}
+    Sem(int init = 1) : val(init) {}
     int value() const { return val; } //maybe unnecessary
-    ~Semaphore() = default;
+    ~Sem() = default;
 public:
     //int sem_open(int init);
     int close();

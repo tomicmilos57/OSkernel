@@ -7,6 +7,25 @@ void empty(){ while(1){printString("Idle\n");} }
 int main() {
     
     Riscv::ms_sstatus(Riscv::SSTATUS_SIE);
+    TCB* mainthread = TCB::createThread(nullptr);
+    printLine("MainThread created: ", (uint64)mainthread);
+    TCB::running = mainthread;
+    Scheduler::idle = TCB::createIdleThread(empty);
+    printLine("IdleThread created: ", (uint64)Scheduler::idle);
+    Riscv::w_stvec((uint64) &Riscv::supervisorTrap);
+    TCB* mymain = TCB::createThread(myMain);
+    printLine("ThreadA created: ", (uint64)mymain);
+    while(!mymain->isFinished()){
+        //busy wait for now
+    }
+    delete mymain;
+    delete mainthread;
+    printString("Finished\n");
+    return 0;
+}
+int main11() {
+    
+    Riscv::ms_sstatus(Riscv::SSTATUS_SIE);
     TCB *coroutines[5];
     coroutines[0] = TCB::createThread(nullptr);
     printLine("MainThread created: ", (uint64)coroutines[0]);
@@ -28,8 +47,8 @@ int main() {
     coroutines[2]->isFinished()&&
     coroutines[3]->isFinished()&&
     coroutines[4]->isFinished())) {
-        TCB::time_sleep(300);
-        //TCB::yield(); thread_dispatch(){ yield(); }
+        //TCB::time_sleep(300);
+        //TCB::yield(); 
     }
     for (auto &coroutine: coroutines) {
         delete coroutine;
@@ -41,8 +60,8 @@ int main() {
 
 #include "../h/semaphore.hpp"
 
-Semaphore *sem1;
-Semaphore *sem2;
+Sem *sem1;
+Sem *sem2;
 
 void seminc(){
     for (uint64 i = 0; i < 10; i++) {
@@ -79,8 +98,8 @@ int main3(){
     Scheduler::idle = TCB::createIdleThread(empty);
     printLine("IdleThread created: ", (uint64)Scheduler::idle);
 
-    sem1 =  new Semaphore(1);
-    sem2 =  new Semaphore(0);
+    sem1 =  new Sem(1);
+    sem2 =  new Sem(0);
 
     coroutines[1] = TCB::createThread(seminc);
     printLine("ThreadA created: ", (uint64)coroutines[1]);
