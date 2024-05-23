@@ -1,5 +1,5 @@
-#ifndef syscall_c_hpp
-#define syscall_c_hpp
+#ifndef syscall_c_h
+#define syscall_c_h
 #include "../lib/hw.h"
 
 enum Code {

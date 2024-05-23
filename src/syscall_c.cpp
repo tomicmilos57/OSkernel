@@ -1,4 +1,4 @@
-#include "../h/syscall_c.hpp"
+#include "../h/syscall_c.h"
 #include "../h/riscv.hpp"
 #define ECALL __asm__ volatile("ecall");
 #define a0(x) __asm__ volatile("mv a0, %0" : : "r" (x));
@@ -25,12 +25,11 @@ int mem_free(void *arg){
     return (int)RET
 }
 
-int thread_create (thread_t* volatile handle, void (*start_routine)(void*), void* volatile arg){
+int thread_create (thread_t* handle, void (*start_routine)(void*), void* arg){
     a3((uint64)arg)
     a2((uint64)start_routine)
     a1((uint64)handle)
     a0(THREAD_CREATE)
-    //a4?
     ECALL
     return (int)RET
 }
@@ -92,10 +91,11 @@ int time_sleep (time_t time){
 }
 char getc (){
     a0(GETC)
-    return RET
+    ECALL
+    return (char)RET
 }
 void putc (char volatile c){
     a0(PUTC)
-    a1(c)
+    a1((uint64)c)
     ECALL
 } 

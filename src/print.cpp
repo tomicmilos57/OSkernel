@@ -2,7 +2,7 @@
 #include "../lib/console.h"
 #include "../h/riscv.hpp"
 
-void printString(const char *string) {
+void SprintString(const char *string) {
     uint64 sstatus = Riscv::r_sstatus();
     Riscv::mc_sstatus(Riscv::SSTATUS_SIE);
     while (*string != '\0') {
@@ -12,7 +12,7 @@ void printString(const char *string) {
     Riscv::ms_sstatus(sstatus & Riscv::SSTATUS_SIE ? Riscv::SSTATUS_SIE : 0);
 }
 
-void printInteger(uint64 integer) {
+void SprintInteger(uint64 integer) {
     uint64 sstatus = Riscv::r_sstatus();
     Riscv::mc_sstatus(Riscv::SSTATUS_SIE);
     static char digits[] = "0123456789";
@@ -36,10 +36,10 @@ void printInteger(uint64 integer) {
         __putc(buf[i]);
     Riscv::ms_sstatus(sstatus & Riscv::SSTATUS_SIE ? Riscv::SSTATUS_SIE : 0);
 }
-void printLine(char const *string, uint64 integer){
-    printString(string);
-    printInteger(integer);
-    printString("\n");
+void SprintLine(char const *string, uint64 integer){
+    SprintString(string);
+    SprintInteger(integer);
+    SprintString("\n");
 }
 
 

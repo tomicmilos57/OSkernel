@@ -40,7 +40,9 @@ void Riscv::handleSupervisorTrap()
             a0((uint64)r) break;
         }
         case THREAD_CREATE:
-            
+            SprintLine("Arg Ptr: ", (uint64)a3);
+            SprintLine("Start Routine: ", (uint64)a2);
+            SprintLine("Handle: ", (uint64)a1);
             break;
         case THREAD_EXIT:
         {
@@ -82,10 +84,10 @@ void Riscv::handleSupervisorTrap()
             TCB::time_sleep(a1);
             break;
         case GETC:
-            a0(__getc());
+            a0((uint64)__getc());
             break;
         case PUTC:
-            __putc(a1);
+            __putc((char)a1);
             break;
         }
         w_sstatus(sstatus);
@@ -121,12 +123,12 @@ void Riscv::handleSupervisorTrap()
     }
     else
     { // unexpected trap cause
-        printString("Unexpected trap cause\n");
+        SprintString("Unexpected trap cause\n");
         // print scause
-        printLine("Scause: ", r_scause());
+        SprintLine("Scause: ", r_scause());
         // print sepc
-        printLine("Sepc: ", r_sepc());
+        SprintLine("Sepc: ", r_sepc());
         // print stval
-        printLine("Stval: ", r_stval());
+        SprintLine("Stval: ", r_stval());
     }
 }
