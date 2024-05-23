@@ -40,10 +40,17 @@ void Riscv::handleSupervisorTrap()
             a0((uint64)r) break;
         }
         case THREAD_CREATE:
+        {
             SprintLine("Arg Ptr: ", (uint64)a3);
             SprintLine("Start Routine: ", (uint64)a2);
             SprintLine("Handle: ", (uint64)a1);
+            TCB* val = TCB::createThread((void(*)(void*))a2, (void*)a3);
+            SprintLine("Created Thr with handle: ", (uint64)val);
+            
+            (*(thread_t**)a1) = (thread_t*)val;
+            a0((uint64)val)
             break;
+        }
         case THREAD_EXIT:
         {
             TCB::thread_exit();
@@ -81,14 +88,19 @@ void Riscv::handleSupervisorTrap()
 
             break;
         case TIME_SLEEP:
+        {
             TCB::time_sleep(a1);
             break;
+        }
         case GETC:
+        {
             a0((uint64)__getc());
             break;
-        case PUTC:
+        }
+        case PUTC:{
             __putc((char)a1);
             break;
+        }
         }
         w_sstatus(sstatus);
         w_sepc(sepc);
@@ -130,5 +142,6 @@ void Riscv::handleSupervisorTrap()
         SprintLine("Sepc: ", r_sepc());
         // print stval
         SprintLine("Stval: ", r_stval());
+        TCB::time_sleep(1000);
     }
 }

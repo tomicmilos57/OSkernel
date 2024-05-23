@@ -17,8 +17,12 @@ int main() {
     SprintLine("IdleThread created: ", (uint64)Scheduler::idle);
     Riscv::w_stvec((uint64) &Riscv::supervisorTrap);
     TCB* mymain = TCB::createThread(userMain);
+    //Riscv::mc_sstatus(Riscv::SSTATUS_SIE);
     SprintLine("ThreadA created: ", (uint64)mymain);
     while(!mymain->isFinished()){
+        //__putc('a');
+        //TCB::time_sleep(500);
+        thread_dispatch();
         //busy wait for now
     }
     delete mymain;

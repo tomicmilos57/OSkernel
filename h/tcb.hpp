@@ -7,9 +7,11 @@
 
 class TCB
 {
-private:
+public:
     using Body = void (*)();
     using Bodyarg = void (*)(void *);
+
+private:
     struct Context
     {
         uint64 ra;
@@ -33,7 +35,7 @@ public:
     // using Body = void (*)();
 
     static TCB *createThread(Body body);
-    static TCB *createThread(Bodyarg body, void* arg);
+    static TCB *createThread(Bodyarg body, void *arg);
     static TCB *createIdleThread(Body body);
 
     bool isFinished() const { return finished; }

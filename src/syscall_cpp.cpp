@@ -10,7 +10,11 @@ Thread::Thread()
     this->body = nullptr;
     this->arg = nullptr;
 }
-int Thread::start() { return thread_create(&myHandle, body, arg); }
+int Thread::start()
+{
+    if(body == nullptr) return thread_create(&myHandle, myRun, this);
+    return thread_create(&myHandle, body, arg);
+}
 void Thread::dispatch() { thread_dispatch(); }
 int Thread::sleep(time_t time) { return time_sleep(time); }
 Thread::~Thread() {} // delete

@@ -15,7 +15,6 @@ void* mem_alloc(size_t size){
     ECALL
     uint64 volatile ret;
     __asm__ volatile("mv %0, a0" : "=r" (ret));
-    //printLine("Pointer returned: ", (uint64)ret);
     return (void*)RET
 }
 int mem_free(void *arg){
@@ -31,7 +30,10 @@ int thread_create (thread_t* handle, void (*start_routine)(void*), void* arg){
     a1((uint64)handle)
     a0(THREAD_CREATE)
     ECALL
-    return (int)RET
+    void* r = (void*)RET
+    //UprintLine("VAN: ", (uint64)*start_routine);
+    if(r == nullptr) return -1;
+    return 0;
 }
 int thread_exit (){
     a0(THREAD_EXIT)
