@@ -8,6 +8,12 @@
 
 void myMain(){
 
+    time_sleep(50);
+    thread_exit();
+    void* ptr = mem_alloc(51);
+    UprintLine("Pointer returned: ", (uint64)ptr);
+    //mem_free(ptr);
+    UprintLine("Uspesno: ", mem_free(ptr));
 }
 
 

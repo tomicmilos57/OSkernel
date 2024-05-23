@@ -41,3 +41,39 @@ void printLine(char const *string, uint64 integer){
     printInteger(integer);
     printString("\n");
 }
+
+
+
+void UprintString(const char *string) {
+    while (*string != '\0') {
+        __putc(*string);
+        string++;
+    }
+}
+
+void UprintInteger(uint64 integer) {
+    static char digits[] = "0123456789";
+    char buf[16];
+    int i;
+    int neg = 0;
+    uint x;
+    if (integer < 0) {
+        neg = 1;
+        x = -integer;
+    } else {
+        x = integer;
+    }
+    i = 0;
+    do {
+        buf[i++] = digits[x % 10];
+    } while ((x /= 10) != 0);
+    if (neg)
+        buf[i++] = '-';
+    while (--i >= 0)
+        __putc(buf[i]);
+}
+void UprintLine(char const *string, uint64 integer){
+    UprintString(string);
+    UprintInteger(integer);
+    UprintString("\n");
+}

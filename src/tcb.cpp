@@ -9,6 +9,7 @@ TCB *TCB::createThread(Body body) { return new TCB(body, TIME_SLICE); }
 TCB *TCB::createIdleThread(Body body) { return new TCB(body, TIME_SLICE, true); }
 
 void TCB::yield() {
+    __asm__ volatile("mv a0, %0" : : "r" (0x13)); //calls thread_dispatch()
     __asm__ volatile("ecall");
 };
 
