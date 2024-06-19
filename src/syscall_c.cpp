@@ -25,6 +25,7 @@ int mem_free(void *arg){
 }
 
 int thread_create (thread_t* handle, void (*start_routine)(void*), void* arg){
+    UprintLine("\nSyscall cpp arg ptr: ", (uint64)arg);
     a3((uint64)arg)
     a2((uint64)start_routine)
     a1((uint64)handle)

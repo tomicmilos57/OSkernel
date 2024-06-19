@@ -19,6 +19,7 @@ public:
     WorkerA():Thread() {}
 
     void run() override {
+        printString("Inside run\n");
         workerBodyA(nullptr);
     }
 };
@@ -29,6 +30,7 @@ public:
     WorkerB():Thread() {}
 
     void run() override {
+        printString("Inside run\n");
         workerBodyB(nullptr);
     }
 };
@@ -39,6 +41,7 @@ public:
     WorkerC():Thread() {}
 
     void run() override {
+        printString("Inside run\n");
         workerBodyC(nullptr);
     }
 };
@@ -49,6 +52,7 @@ public:
     WorkerD():Thread() {}
 
     void run() override {
+        printString("Inside run\n");
         workerBodyD(nullptr);
     }
 };
@@ -142,7 +146,6 @@ void Threads_CPP_API_test() {
 
     threads[3] = new WorkerD();
     printString("ThreadD created\n");
-
     for(int i=0; i<4; i++) {
         threads[i]->start();
     }

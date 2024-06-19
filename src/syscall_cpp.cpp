@@ -10,9 +10,12 @@ Thread::Thread()
     this->body = nullptr;
     this->arg = nullptr;
 }
+#include "../h/print.hpp"
 int Thread::start()
 {
-    if(body == nullptr) return thread_create(&myHandle, myRun, this);
+    UprintLine("Inside start with handle: ", (uint64) &myHandle);
+    UprintLine("Inside start with this ptr: ", (uint64) this);
+    if(body == nullptr) return thread_create(&myHandle, myRun, (void*)this);
     return thread_create(&myHandle, body, arg);
 }
 void Thread::dispatch() { thread_dispatch(); }
@@ -25,4 +28,4 @@ int Semaphore::wait() { return sem_wait(myHandle); }
 int Semaphore::signal() { return sem_signal(myHandle); }
 
 char Console::getc() { return getc(); }
-void Console::putc(char c) { putc(c); }
+void Console::putc(char c) { ::putc(c); } //Potencijalno problem ako se syscall_c.cpp preimenuje u syscall_c.c

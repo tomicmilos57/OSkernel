@@ -14,7 +14,7 @@ public:
 
 protected:
     Thread();
-    virtual void run() {}
+    virtual void run() {};
 
 private:
     static void myRun(void* arg) { Thread* tthis = (Thread*)arg; tthis->run(); }

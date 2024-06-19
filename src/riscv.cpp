@@ -16,17 +16,22 @@ void Riscv::popSppSpie()
 void Riscv::handleSupervisorTrap()
 {
     uint64 scause = r_scause();
-    if (scause == 0x0000000000000009UL || scause == 0x0000000000000008UL)
-    {                                        // ecall
-        uint64 volatile sepc = r_sepc() + 4; // ecall return to its address
-        uint64 volatile sstatus = r_sstatus();
-        uint64 code, a1, a2, a3, a4;
 
+        uint64 volatile code, a1, a2, a3, a4;
         __asm__ volatile("mv %[code], a0" : [code] "=r"(code));
         __asm__ volatile("mv %[a1], a1" : [a1] "=r"(a1));
         __asm__ volatile("mv %[a2], a2" : [a2] "=r"(a2));
         __asm__ volatile("mv %[a3], a3" : [a3] "=r"(a3));
         __asm__ volatile("mv %[a4], a4" : [a4] "=r"(a4));
+    if (scause == 0x0000000000000009UL || scause == 0x0000000000000008UL)
+    {                                        // ecall
+        
+        uint64 volatile sepc = r_sepc() + 4; // ecall return to its address
+        uint64 volatile sstatus = r_sstatus();
+        
+
+
+
         switch (code)
         {
         case MEM_ALLOC:
@@ -44,7 +49,7 @@ void Riscv::handleSupervisorTrap()
             SprintLine("Arg Ptr: ", (uint64)a3);
             SprintLine("Start Routine: ", (uint64)a2);
             SprintLine("Handle: ", (uint64)a1);
-            TCB* val = TCB::createThread((void(*)(void*))a2, (void*)a3);
+            TCB* volatile val = TCB::createThread((void(*)(void*))a2, (void*)a3);
             SprintLine("Created Thr with handle: ", (uint64)val);
             
             (*(thread_t**)a1) = (thread_t*)val;
