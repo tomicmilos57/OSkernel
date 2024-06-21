@@ -13,8 +13,8 @@ Thread::Thread()
 #include "../h/print.hpp"
 int Thread::start()
 {
-    UprintLine("Inside start with handle: ", (uint64) &myHandle);
-    UprintLine("Inside start with this ptr: ", (uint64) this);
+    //UprintLine("Inside start with handle: ", (uint64) &myHandle);
+    //UprintLine("Inside start with this ptr: ", (uint64) this);
     if(body == nullptr) return thread_create(&myHandle, myRun, (void*)this);
     return thread_create(&myHandle, body, arg);
 }
@@ -26,6 +26,7 @@ Semaphore::Semaphore(unsigned init) { sem_open(&myHandle, init); }
 Semaphore::~Semaphore() { sem_close(myHandle); }
 int Semaphore::wait() { return sem_wait(myHandle); }
 int Semaphore::signal() { return sem_signal(myHandle); }
-
-char Console::getc() { return getc(); }
+int Semaphore::timedWait(time_t time){ return timedWait(time); }
+int Semaphore::tryWait(){ return tryWait(); }
+char Console::getc() { return ::getc(); }
 void Console::putc(char c) { ::putc(c); } //Potencijalno problem ako se syscall_c.cpp preimenuje u syscall_c.c

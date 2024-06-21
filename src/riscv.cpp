@@ -3,6 +3,7 @@
 #include "../h/tcb.hpp"
 #include "../h/print.hpp"
 #include "../h/syscall_cpp.hpp"
+#include "../h/semaphore.hpp"
 #define a0(x)                                 \
     __asm__ volatile("mv t0, %0" : : "r"(x)); \
     __asm__ volatile("sw t0, 80(x8)");
@@ -46,11 +47,11 @@ void Riscv::handleSupervisorTrap()
         }
         case THREAD_CREATE:
         {
-            SprintLine("Arg Ptr: ", (uint64)a3);
-            SprintLine("Start Routine: ", (uint64)a2);
-            SprintLine("Handle: ", (uint64)a1);
+            //SprintLine("Arg Ptr: ", (uint64)a3);
+            //SprintLine("Start Routine: ", (uint64)a2);
+            //SprintLine("Handle: ", (uint64)a1);
             TCB* volatile val = TCB::createThread((void(*)(void*))a2, (void*)a3);
-            SprintLine("Created Thr with handle: ", (uint64)val);
+            //SprintLine("Created Thr with handle: ", (uint64)val);
             
             (*(thread_t**)a1) = (thread_t*)val;
             a0((uint64)val)
@@ -75,23 +76,53 @@ void Riscv::handleSupervisorTrap()
             break;
         }
         case SEM_OPEN:
-
+        {
+            //SprintLine("Handle S MODE: ", a1);
+            //SprintLine("Init S MODE: ", a2);
+            Sem **handle = (Sem**)a1;
+            Sem *semaphore = new Sem(a2);//should a2 be unsigned or uint64?
+            //(*(thread_t**)a1) = (thread_t*)val;
+            if(semaphore == nullptr) a0(-1);
+            
+            *handle = semaphore;
+            a0(0)
             break;
+        }
         case SEM_CLOSE:
+        {
 
+        
+            
             break;
+        }
         case SEM_WAIT:
-
+        {
+            Sem* handle = (Sem*)a1;
+            if(handle == nullptr){
+                a0(-1)
+                break;
+            }
+            handle->wait();
             break;
+        }
         case SEM_SIGNAL:
-
+        {
+            Sem* handle = (Sem*)a1;
+            if(handle == nullptr){
+                a0(-1)
+                break;
+            }
+            handle->signal();
             break;
+        }
         case SEM_TIMEDWAIT:
-
+        {
             break;
+        }
         case SEM_TRYWAIT:
-
+        {
             break;
+        }
         case TIME_SLEEP:
         {
             TCB::time_sleep(a1);

@@ -11,14 +11,14 @@ int main() {
     
     Riscv::ms_sstatus(Riscv::SSTATUS_SIE);
     TCB* mainthread = TCB::createThread(nullptr);
-    SprintLine("MainThread created: ", (uint64)mainthread);
+    //SprintLine("MainThread created: ", (uint64)mainthread);
     TCB::running = mainthread;
     Scheduler::idle = TCB::createIdleThread(empty);
-    SprintLine("IdleThread created: ", (uint64)Scheduler::idle);
+    //SprintLine("IdleThread created: ", (uint64)Scheduler::idle);
     Riscv::w_stvec((uint64) &Riscv::supervisorTrap);
     TCB* mymain = TCB::createThread(userMain);
     //Riscv::mc_sstatus(Riscv::SSTATUS_SIE);
-    SprintLine("ThreadA created: ", (uint64)mymain);
+    //SprintLine("ThreadA created: ", (uint64)mymain);
     while(!mymain->isFinished()){
         //__putc('a');
         //TCB::time_sleep(500);
@@ -27,7 +27,7 @@ int main() {
     }
     delete mymain;
     delete mainthread;
-    SprintString("\nFinished\n");
+    //SprintString("\nFinished\n");
     return 0;
 }
 int main11() {
