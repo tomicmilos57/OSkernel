@@ -62,19 +62,7 @@ void Riscv::handleSupervisorTrap()
             TCB::thread_exit();
             break;
         }
-        case THREAD_DISPATCH:
-        {
-            uint64 volatile sepc_yield = r_sepc() + 4; // ecall return to its address
-            uint64 volatile sstatus_yield = r_sstatus();
-            TCB::timeSLiceCounter = 0;
-            if (TCB::running->sleeping > 0)
-                TCB::dispatchSleep();
-            else
-                TCB::dispatch();
-            w_sstatus(sstatus_yield);
-            w_sepc(sepc_yield);
-            break;
-        }
+
         case SEM_OPEN:
         {
             //SprintLine("Handle S MODE: ", a1);
@@ -113,6 +101,19 @@ void Riscv::handleSupervisorTrap()
                 break;
             }
             handle->signal();
+            //break; //after signal -> go to dispatch
+        }
+        case THREAD_DISPATCH:
+        {
+            uint64 volatile sepc_yield = r_sepc() + 4; // ecall return to its address
+            uint64 volatile sstatus_yield = r_sstatus();
+            TCB::timeSLiceCounter = 0;
+            if (TCB::running->sleeping > 0)
+                TCB::dispatchSleep();
+            else
+                TCB::dispatch();
+            w_sstatus(sstatus_yield);
+            w_sepc(sepc_yield);
             break;
         }
         case SEM_TIMEDWAIT:
