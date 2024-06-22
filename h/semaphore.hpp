@@ -16,13 +16,13 @@ public:
     Sem(int init = 1) : val(init) {}
     int value() const { return val; } //maybe unnecessary
     ~Sem() = default;
-public:
+    //TCB* current;
     //int sem_open(int init);
     int close();
-    void wait();
-    void signal();
-    //void timedwait(time_t timeout);//should be implemented in C API
-    //int trywait(); C API
+    int wait();
+    int signal();
+    int timedwait(time_t timeout);
+    int trywait();
 };
 
 

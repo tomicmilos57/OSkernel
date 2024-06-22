@@ -78,7 +78,12 @@ void Riscv::handleSupervisorTrap()
         }
         case SEM_CLOSE:
         {
-
+            Sem* handle = (Sem*)a1;
+            if(handle == nullptr){
+                a0(-1)
+                break;
+            }
+            
         
             
             break;
@@ -116,12 +121,25 @@ void Riscv::handleSupervisorTrap()
             w_sepc(sepc_yield);
             break;
         }
-        case SEM_TIMEDWAIT:
+        case SEM_TIMEDWAIT://sleeping = a2;
         {
+            Sem* handle = (Sem*)a1;
+            uint64 timeout = a2;
+            if(handle == nullptr){
+                a0(-1)
+                break;
+            }
+            handle->timedwait(timeout);
             break;
         }
         case SEM_TRYWAIT:
         {
+            Sem* handle = (Sem*)a1;
+            if(handle == nullptr){
+                a0(-1)
+                break;
+            }
+            handle->trywait();
             break;
         }
         case TIME_SLEEP:
@@ -154,7 +172,15 @@ void Riscv::handleSupervisorTrap()
             else
                 Scheduler::put(elem);
         }
-
+        for (uint64 i = 0; i < Scheduler::getNumSemSleep(); i++) 
+        {                                                       
+            TCB *elem = Scheduler::getSemSleep();
+            elem->sleeping--;
+            if (elem->sleeping > 0)
+                Scheduler::putSemSleep(elem);
+            else
+                Scheduler::put(elem);
+        }
         if (TCB::timeSLiceCounter >= TCB::running->getTimeSlice())
         {
             uint64 volatile sepc = r_sepc();

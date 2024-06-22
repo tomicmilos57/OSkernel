@@ -26,7 +26,7 @@ Semaphore::Semaphore(unsigned init) { sem_open(&myHandle, init); }
 Semaphore::~Semaphore() { sem_close(myHandle); }
 int Semaphore::wait() { return sem_wait(myHandle); }
 int Semaphore::signal() { return sem_signal(myHandle); }
-int Semaphore::timedWait(time_t time){ return timedWait(time); }
-int Semaphore::tryWait(){ return tryWait(); }
+int Semaphore::timedWait(time_t time){ return sem_timedwait(myHandle, time); }
+int Semaphore::tryWait(){ return sem_trywait(myHandle); }
 char Console::getc() { return ::getc(); }
 void Console::putc(char c) { ::putc(c); } //Potencijalno problem ako se syscall_c.cpp preimenuje u syscall_c.c
