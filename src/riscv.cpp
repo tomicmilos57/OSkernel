@@ -73,6 +73,7 @@ void Riscv::handleSupervisorTrap()
             if(semaphore == nullptr) a0(-1);
             
             *handle = semaphore;
+            Scheduler::putSem(semaphore);
             a0(0)
             break;
         }
@@ -83,9 +84,7 @@ void Riscv::handleSupervisorTrap()
                 a0(-1)
                 break;
             }
-            
-        
-            
+            //Scheduler::removeSemaphore(handle);
             break;
         }
         case SEM_WAIT:
@@ -129,7 +128,8 @@ void Riscv::handleSupervisorTrap()
                 a0(-1)
                 break;
             }
-            handle->timedwait(timeout);
+            int ret = handle->timedwait(timeout);
+            a0(ret)
             break;
         }
         case SEM_TRYWAIT:
@@ -164,7 +164,7 @@ void Riscv::handleSupervisorTrap()
     { // interrupt, supervisor software interrupt (timer)
         TCB::timeSLiceCounter++;
         for (uint64 i = 0; i < Scheduler::getNumOfSleep(); i++) // This won't work if Scheduler is not queue
-        {                                                       // change from int i to uint64 i
+        {                                                       
             TCB *elem = Scheduler::getSleep();
             elem->sleeping--;
             if (elem->sleeping > 0)
@@ -172,15 +172,18 @@ void Riscv::handleSupervisorTrap()
             else
                 Scheduler::put(elem);
         }
-        for (uint64 i = 0; i < Scheduler::getNumSemSleep(); i++) 
-        {                                                       
-            TCB *elem = Scheduler::getSemSleep();
-            elem->sleeping--;
-            if (elem->sleeping > 0)
-                Scheduler::putSemSleep(elem);
-            else
-                Scheduler::put(elem);
-        }
+        Scheduler::wakeUpSleepingSemaphores();
+        //for (uint64 i = 0; i < Scheduler::getNumSemSleep(); i++) 
+        //{                                                       
+        //    TCB *elem = Scheduler::getSemSleep();
+        //    elem->sleeping--;
+        //    if (elem->sleeping > 0)
+        //        Scheduler::putSemSleep(elem);
+        //    else{
+        //        //remove from blocked
+        //        Scheduler::put(elem);
+        //    }
+        //}
         if (TCB::timeSLiceCounter >= TCB::running->getTimeSlice())
         {
             uint64 volatile sepc = r_sepc();

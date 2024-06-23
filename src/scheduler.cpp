@@ -2,7 +2,7 @@
 #include "../h/tcb.hpp"
 List<TCB> Scheduler::readyThreadQueue;
 List<TCB> Scheduler::sleepThreadQueue;
-List<TCB> Scheduler::semaphoreSleepQueue;
+//List<TCB> Scheduler::semaphoreSleepQueue;
 List<Sem> Scheduler::semaphoreQueue;
 uint64 Scheduler::nsleep = 0;
 uint64 Scheduler::semsleep = 0;
@@ -32,6 +32,19 @@ Sem *Scheduler::getSem(){
 void Scheduler::putSem(Sem *sem){
     semaphoreQueue.addLast(sem);
 } 
-TCB *Scheduler::getSemSleep(){semsleep--; return semaphoreSleepQueue.removeFirst(); }
-void Scheduler::putSemSleep(TCB *sem){semsleep++; semaphoreSleepQueue.addLast(sem); }
-uint64 Scheduler::getNumSemSleep(){ return semsleep; }
+
+
+void Scheduler::wakeUpSleepingSemaphores(){
+    for(semaphoreQueue.init();semaphoreQueue.hasNext();semaphoreQueue.next()){
+        semaphoreQueue.getCurrent()->wakeUp();
+    }
+}
+
+void Scheduler::removeSemaphore(Sem* sem){
+    for(semaphoreQueue.init();semaphoreQueue.hasNext();semaphoreQueue.next()){
+        if(semaphoreQueue.getCurrent() == sem) {
+            semaphoreQueue.removeCurrent();
+            break;
+        }
+    }
+}

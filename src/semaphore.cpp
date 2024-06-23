@@ -19,10 +19,10 @@ void Sem::block(){
 }
 void Sem::unblock(){
     TCB* blocked = getBlock();
-    if(blocked == 0){ //When there are no blocked
-        //TODO get from semSleepQueue 
-    }
+    if(blocked != 0){
+    blocked->sleeping = 0; //Is this enough, or is removal from SleepingQueue neccessary
     Scheduler::put(blocked);
+    }
 }
 int Sem::wait(){
     TCB *old = TCB::running;
@@ -40,17 +40,26 @@ int Sem::trywait(){
     //unlock
     return 0;
 }
+#include "../h/print.hpp"
 int Sem::timedwait(time_t timeout){
-    TCB *old = TCB::running;
-
+    TCB *old = TCB::running;//volatile
+    
     if(--val < 0) {
         old->sleeping = timeout;
-        Scheduler::putSemSleep(old);
+        putBlock(old);
     }
     else Scheduler::put(old);
     TCB::running = Scheduler::get();
 
     TCB::contextSwitch(&old->context, &TCB::running->context);
+    //if(TCB::running){SprintString("radi\n");}
+    //SprintLine("After : ", (uint64)old);
+    TCB *temp = TCB::getRunning();
+    if(temp->timeout == 2) {
+        //SprintLine("timeoutWakeup : ", temp->timeout);
+        temp->timeout = 0;
+        return -2; 
+    }
     return 0;
 }
 int Sem::signal(){
@@ -65,4 +74,32 @@ int Sem::close(){
         Scheduler::put(thread);
     }
     return 0;
+}
+
+
+void Sem::wakeUp(){
+    //for(blockedQueue.init(); blockedQueue.hasNext(); blockedQueue.next()){
+    //    TCB* curr = blockedQueue.getCurrent();
+    //    if(curr->sleeping == 1){
+    //        curr->sleeping = 0;
+    //        blockedQueue.removeCurrent();
+    //        Scheduler::put(curr);
+    //    }else if(curr->sleeping > 1) curr->sleeping--;
+    //}
+    for (uint64 i = 0; i < blockedQueue.getN(); i++) 
+    {                                                       
+        TCB *elem = blockedQueue.removeFirst();
+        if (elem->sleeping == 1){
+            elem->sleeping = 0;
+            elem->timeout = 2;
+            //SprintLine("timeoutWakeup : ", (uint64)elem);
+            //SprintLine("timeoutWakeup : ", elem->timeout);
+
+            Scheduler::put(elem);
+        }
+        else if(elem->sleeping > 1) {
+            elem->sleeping--;
+            blockedQueue.addLast(elem);
+        }else blockedQueue.addLast(elem);
+    }
 }

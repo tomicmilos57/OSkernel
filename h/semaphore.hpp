@@ -23,6 +23,7 @@ public:
     int signal();
     int timedwait(time_t timeout);
     int trywait();
+    void wakeUp();
 };
 
 

@@ -23,6 +23,9 @@ void TCB::dispatch() {
     running = Scheduler::get();
     TCB::contextSwitch(&old->context, &running->context);
 }
+TCB* TCB::getRunning(){
+    return TCB::running;
+}
 void TCB::dispatchSleep() {
     TCB *old = running;
 

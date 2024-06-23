@@ -12,7 +12,7 @@ private:
   static List<TCB> readyThreadQueue;
   static List<TCB> sleepThreadQueue;
   static List<Sem> semaphoreQueue;
-  static List<TCB> semaphoreSleepQueue;
+  //static List<TCB> semaphoreSleepQueue;
   static uint64 nsleep;
   static uint64 semsleep;
 public:
@@ -26,9 +26,11 @@ public:
   static Sem *getSem();
   static void putSem(Sem *ccb);
 
-  static TCB *getSemSleep();
-  static void putSemSleep(TCB *ccb);
-  static uint64 getNumSemSleep();
+  static void wakeUpSleepingSemaphores();
+  static void removeSemaphore(Sem*);
+//  static TCB *getSemSleep();
+//  static void putSemSleep(TCB *ccb);
+//  static uint64 getNumSemSleep();
 };
 
 #endif

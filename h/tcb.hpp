@@ -10,7 +10,7 @@ class TCB
 public:
     using Body = void (*)();
     using Bodyarg = void (*)(void *);
-
+int timeout = 0;
 private:
     struct Context
     {
@@ -26,7 +26,7 @@ private:
     uint64 timeSlice;
     bool finished;
     uint64 sleeping = 0;
-
+    
     static uint64 timeSLiceCounter;
     static uint64 constexpr STACK_SIZE = 1024;
     static uint64 constexpr TIME_SLICE = 2;
@@ -46,7 +46,7 @@ public:
     static void dispatch();
     static void dispatchSleep();
     static void yield();
-
+    static TCB* getRunning();
     ~TCB() { delete[] stack; }
 
     static TCB *running;

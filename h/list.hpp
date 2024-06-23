@@ -11,7 +11,9 @@ private:
     Elem(T *data, Elem *next) : data(data), next(next) {}
   };
   Elem *head, *tail;
-  uint64 n;
+  uint64 n = 0;
+  Elem* iter = nullptr;
+  uint64 index = 0;
 public:
   List() : head(0), tail(0) {}
   List(const List<T> &) = delete;
@@ -80,6 +82,35 @@ public:
       return 0;
     }
     return tail->data;
+  }
+
+  uint64 getN(){ return n; } 
+  void init(){
+    index = 0;
+    iter = head;
+  }
+  bool hasNext(){
+    return index < n;
+  }
+  void next(){
+    index++;
+    if(iter)iter = iter->next;
+  }
+  T *getCurrent(){
+    return iter->data;
+  }
+  T *removeCurrent(){
+    Elem* find;
+    if(iter == head) {index--; iter = head->next; return removeFirst();}
+    if(iter == tail) {index--; iter = nullptr; return removeLast();}
+    for(find = head; find->next != iter; find = find->next);
+    find->next = iter->next;
+    T *ret = iter->data;
+    //delete iter;
+    iter = find;
+    index--;
+    n--;
+    return ret;
   }
 };
 

@@ -23,7 +23,6 @@ int main() {
         //__putc('a');
         //TCB::time_sleep(500);
         thread_dispatch();
-        //busy wait for now
     }
     delete mymain;
     delete mainthread;
