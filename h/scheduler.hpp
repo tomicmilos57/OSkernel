@@ -18,6 +18,8 @@ private:
 public:
   static TCB *get();
   static void put(TCB *ccb);
+  static void putFirst(TCB *ccb);
+   
   static TCB *getSleep();
   static void putSleep(TCB *ccb);
   static uint64 getNumOfSleep();

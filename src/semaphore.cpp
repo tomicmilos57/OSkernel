@@ -21,7 +21,8 @@ void Sem::unblock(){
     TCB* blocked = getBlock();
     if(blocked != 0){
     blocked->sleeping = 0; //Is this enough, or is removal from SleepingQueue neccessary
-    Scheduler::put(blocked);
+    //Scheduler::put(blocked);
+    Scheduler::putFirst(blocked);
     }
 }
 int Sem::wait(){
@@ -82,6 +83,7 @@ void Sem::wakeUp(){
     //    TCB* curr = blockedQueue.getCurrent();
     //    if(curr->sleeping == 1){
     //        curr->sleeping = 0;
+    //        curr->timeout = 2;
     //        blockedQueue.removeCurrent();
     //        Scheduler::put(curr);
     //    }else if(curr->sleeping > 1) curr->sleeping--;

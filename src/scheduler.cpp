@@ -20,7 +20,11 @@ void Scheduler::put(TCB *ccb) {
         readyThreadQueue.addLast(ccb);
     }
 }
-
+void Scheduler::putFirst(TCB *ccb) {
+    if(ccb != idle) {
+        readyThreadQueue.addFirst(ccb);
+    }
+}
 TCB *Scheduler::getSleep() { nsleep--; return sleepThreadQueue.removeFirst(); }
 void Scheduler::putSleep(TCB *ccb) { nsleep++; sleepThreadQueue.addLast(ccb); }
 uint64 Scheduler::getNumOfSleep(){return nsleep;}
