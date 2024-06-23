@@ -24,6 +24,7 @@ public:
     int timedwait(time_t timeout);
     int trywait();
     void wakeUp();
+    void unblockAll();
 };
 
 

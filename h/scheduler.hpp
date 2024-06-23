@@ -30,6 +30,8 @@ public:
 
   static void wakeUpSleepingSemaphores();
   static void removeSemaphore(Sem*);
+  static int getSemaphoresNumber(){ return semaphoreQueue.getN(); } //debug function
+  static bool semaphoreExists(Sem*);
 //  static TCB *getSemSleep();
 //  static void putSemSleep(TCB *ccb);
 //  static uint64 getNumSemSleep();

@@ -45,10 +45,30 @@ void Scheduler::wakeUpSleepingSemaphores(){
 }
 
 void Scheduler::removeSemaphore(Sem* sem){
+//    for(semaphoreQueue.init();semaphoreQueue.hasNext();semaphoreQueue.next()){
+//        if(semaphoreQueue.getCurrent() == sem) {
+//            semaphoreQueue.removeCurrent();
+//            break;
+//        }
+//    }
+    for (uint64 i = 0; i < semaphoreQueue.getN(); i++) 
+    {                                                       
+        Sem *elem = semaphoreQueue.removeFirst();
+        if (elem != sem){
+            semaphoreQueue.addLast(elem);
+        }else{
+            sem->unblockAll();
+        }
+    }
+}
+bool Scheduler::semaphoreExists(Sem* sem){
+    if(sem == nullptr) return false;
+    bool found = false;
     for(semaphoreQueue.init();semaphoreQueue.hasNext();semaphoreQueue.next()){
         if(semaphoreQueue.getCurrent() == sem) {
-            semaphoreQueue.removeCurrent();
+            found = true;
             break;
         }
     }
+    return found;
 }

@@ -20,7 +20,7 @@ void Sem::block(){
 void Sem::unblock(){
     TCB* blocked = getBlock();
     if(blocked != 0){
-    blocked->sleeping = 0; //Is this enough, or is removal from SleepingQueue neccessary
+    blocked->sleeping = 0; 
     //Scheduler::put(blocked);
     Scheduler::putFirst(blocked);
     }
@@ -33,12 +33,17 @@ int Sem::wait(){
     TCB::running = Scheduler::get();
 
     TCB::contextSwitch(&old->context, &TCB::running->context);
+
+    TCB *temp = TCB::getRunning();
+    if(temp->timeout == 1) {
+        temp->timeout = 0;
+        return -1; 
+    }
+
     return 0;
 }
 int Sem::trywait(){
-    //lock
-    if(--val < 0) block();
-    //unlock
+    if(--val < 0) block();//return value?
     return 0;
 }
 #include "../h/print.hpp"
@@ -60,6 +65,9 @@ int Sem::timedwait(time_t timeout){
         //SprintLine("timeoutWakeup : ", temp->timeout);
         temp->timeout = 0;
         return -2; 
+    }else if(temp->timeout == 1) {
+        temp->timeout = 0;
+        return -1; 
     }
     return 0;
 }
@@ -103,5 +111,15 @@ void Sem::wakeUp(){
             elem->sleeping--;
             blockedQueue.addLast(elem);
         }else blockedQueue.addLast(elem);
+    }
+}
+void Sem::unblockAll(){
+    for (uint64 i = 0; i < blockedQueue.getN(); i++) {
+        TCB* blocked = getBlock();
+        if(blocked != 0){
+            blocked->sleeping = 0;
+            blocked->timeout = 1;
+            Scheduler::putFirst(blocked);
+        }
     }
 }

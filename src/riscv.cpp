@@ -54,12 +54,14 @@ void Riscv::handleSupervisorTrap()
             //SprintLine("Created Thr with handle: ", (uint64)val);
             
             (*(thread_t**)a1) = (thread_t*)val;
-            a0((uint64)val)
+            //a0((uint64)val)
+            if(val){a0(0)}
+            else {a0(-1)}
             break;
         }
         case THREAD_EXIT:
         {
-            TCB::thread_exit();
+            a0(TCB::thread_exit())
             break;
         }
 
@@ -80,31 +82,33 @@ void Riscv::handleSupervisorTrap()
         case SEM_CLOSE:
         {
             Sem* handle = (Sem*)a1;
-            if(handle == nullptr){
+            if(handle == nullptr || !Scheduler::semaphoreExists(handle)){
                 a0(-1)
                 break;
             }
-            //Scheduler::removeSemaphore(handle);
+            Scheduler::removeSemaphore(handle);
+            SprintLine("Num of Semaphores: ", Scheduler::getSemaphoresNumber());
+            a0(0)
             break;
         }
         case SEM_WAIT:
         {
             Sem* handle = (Sem*)a1;
-            if(handle == nullptr){
+            if(!Scheduler::semaphoreExists(handle)){
                 a0(-1)
                 break;
             }
-            handle->wait();
+            a0(handle->wait())
             break;
         }
         case SEM_SIGNAL:
         {
             Sem* handle = (Sem*)a1;
-            if(handle == nullptr){
+            if(!Scheduler::semaphoreExists(handle)){
                 a0(-1)
                 break;
             }
-            handle->signal();
+            a0(handle->signal())
             //break; //after signal -> go to dispatch
         }
         case THREAD_DISPATCH:
@@ -135,16 +139,16 @@ void Riscv::handleSupervisorTrap()
         case SEM_TRYWAIT:
         {
             Sem* handle = (Sem*)a1;
-            if(handle == nullptr){
+            if(!Scheduler::semaphoreExists(handle)){
                 a0(-1)
                 break;
             }
-            handle->trywait();
+            a0(handle->trywait())
             break;
         }
         case TIME_SLEEP:
         {
-            TCB::time_sleep(a1);
+            a0(TCB::time_sleep(a1));
             break;
         }
         case GETC:

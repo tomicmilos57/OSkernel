@@ -24,8 +24,8 @@ int main() {
         //TCB::time_sleep(500);
         thread_dispatch();
     }
-    delete mymain;
-    delete mainthread;
+    //delete mymain; //ERROR
+    //delete mainthread; //ERROR
     //SprintString("\nFinished\n");
     return 0;
 }
