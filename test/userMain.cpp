@@ -1,5 +1,5 @@
 #include "printing.hpp"
-
+#include "moj_Test.hpp"
 #define LEVEL_1_IMPLEMENTED 0
 #define LEVEL_2_IMPLEMENTED 1
 #define LEVEL_3_IMPLEMENTED 1
@@ -100,6 +100,15 @@ void userMain() {
             printString("TEST 7 (zadatak 2., testiranje da li se korisnicki kod izvrsava u korisnickom rezimu)\n");
 #endif
             break;
+        case 8:
+            mojTestTimedwait();
+            printString("TEST 8 (sem_timedwait)\n");
+            break;
+        case 9:
+            randomTest();
+            printString("TEST 9 (RandomTest)\n");
+            break;
+            
         default:
             printString("Niste uneli odgovarajuci broj za test\n");
     }

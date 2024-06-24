@@ -131,56 +131,7 @@ void WorkerD::workerBodyD(void* arg) {
     thread_dispatch();
 }
 
-class ModifikacijaThread:public Thread{
-private:
-    int id;
-    Semaphore *sem;
-public:
-    ModifikacijaThread(int id, Semaphore *sem) : id(id), sem(sem) {}
-protected:
-   void run() override{
-        int i = 3;
-        while(i > 0){
-            int ret = sem->timedWait(id);
-            if(ret == 0){
-                printString(">Thread entered ");
-                printInt(id, 10, 1);
-                printString("\n");
-                sleep(id);
-                printString("<Thread exited ");
-                printInt(id, 10, 1);
-                printString("\n");
-                sem->signal();
-                i--;
-            }
-            else if(ret == -2){
-                printString("**Elapsed time waiting  ");
-                printInt(id, 10, 1);
-                printString("\n");
-            }
-            Thread::dispatch();
-        }
-    }
-};
-static Semaphore* waitForAll;
-#define NUM 10
 void Threads_CPP_API_test() {
-    Thread* threads[NUM];
-    waitForAll = new Semaphore(1);
-    printString("Test2\n");
-    for(int i=0; i<NUM; i++) {
-        threads[i] = new ModifikacijaThread(i+10, waitForAll);
-    }
-    for(int i=0; i<NUM; i++) {
-        threads[i]->start();
-    }
-    while (1) {
-        Thread::dispatch();
-    }
-    printString("GG\n");
-    for (auto thread: threads) { delete thread; }
-}
-/*void Threads_CPP_API_test() {
     Thread* threads[4];
 
     threads[0] = new WorkerA();
@@ -203,4 +154,4 @@ void Threads_CPP_API_test() {
     }
 
     for (auto thread: threads) { delete thread; }
-}*/
+}

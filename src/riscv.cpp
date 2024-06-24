@@ -60,8 +60,9 @@ void Riscv::handleSupervisorTrap()
             break;
         }
         case THREAD_EXIT:
-        {
-            a0(TCB::thread_exit())
+        {   
+            TCB::thread_exit();
+            a0(0)
             break;
         }
 
