@@ -4,6 +4,7 @@
 #include "../h/print.hpp"
 #include "../h/syscall_cpp.hpp"
 #include "../h/semaphore.hpp"
+#include "../h/memory.hpp"
 #define a0(x)                                 \
     __asm__ volatile("mv t0, %0" : : "r"(x)); \
     __asm__ volatile("sw t0, 80(x8)");
@@ -37,12 +38,12 @@ void Riscv::handleSupervisorTrap()
         {
         case MEM_ALLOC:
         {  
-            void *ptr = __mem_alloc((size_t)a1);
+            void *ptr = malloc((size_t)a1);
             a0((uint64)ptr) break;
         }
         case MEM_FREE:
         {
-            int r = __mem_free((void *)a1);
+            int r = free((void *)a1);
             a0((uint64)r) break;
         }
         case THREAD_CREATE:
@@ -213,6 +214,7 @@ void Riscv::handleSupervisorTrap()
         SprintLine("Sepc: ", r_sepc());
         // print stval
         SprintLine("Stval: ", r_stval());
-        TCB::time_sleep(1000);
+        while(1);
+        //TCB::time_sleep(1000);
     }
 }

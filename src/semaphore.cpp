@@ -48,6 +48,7 @@ int Sem::trywait(){
 }
 #include "../h/print.hpp"
 int Sem::timedwait(time_t timeout){
+    if(timeout <= 0) return 0;
     TCB *old = TCB::running;//volatile
     
     if(--val < 0) {

@@ -1,9 +1,16 @@
 #include "../h/syscall_cpp.hpp"
 #include "../lib/mem.h"
-void *operator new(size_t n) { return __mem_alloc(n); }
-void *operator new[](size_t n) { return __mem_alloc(n); }
-void operator delete(void *n) { __mem_free(n); }
-void operator delete[](void *n) { __mem_free(n); }
+#include "../h/memory.hpp"
+#include "../h/print.hpp"
+void *operator new(size_t n) { 
+    //uint64 volatile ra;
+    //__asm__ volatile("mv %[ra], ra" : [ra] "=r"(ra));
+    //UprintString("KAKO\n");
+    return malloc(n);
+    /*__mem_alloc(n);*/ } // C call mem alloc?
+void *operator new[](size_t n) { return malloc(n);/*__mem_alloc(n);*/ }
+void operator delete(void *n) { free(n);/*mem_free(n);*/ }
+void operator delete[](void *n) { free(n);/*mem_free(n);*/ }
 Thread::Thread(void (*body)(void *), void *arg) : body(body), arg(arg) {}
 Thread::Thread()
 {

@@ -12,13 +12,14 @@ void SprintString(const char *string) {
     Riscv::ms_sstatus(sstatus & Riscv::SSTATUS_SIE ? Riscv::SSTATUS_SIE : 0);
 }
 
-void SprintInteger(uint64 integer) {
+void SprintInteger(uint64 in) {
     uint64 sstatus = Riscv::r_sstatus();
     Riscv::mc_sstatus(Riscv::SSTATUS_SIE);
     static char digits[] = "0123456789";
     char buf[16];
     int i;
     int neg = 0;
+    long long integer = (long long) in;
     uint x;
     if (integer < 0) {
         neg = 1;
@@ -51,12 +52,13 @@ void UprintString(const char *string) {
     }
 }
 
-void UprintInteger(uint64 integer) {
+void UprintInteger(uint64 in) {
     static char digits[] = "0123456789";
     char buf[16];
     int i;
     int neg = 0;
     uint x;
+    long long integer = (long long) in;
     if (integer < 0) {
         neg = 1;
         x = -integer;

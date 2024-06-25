@@ -10,12 +10,13 @@
 #include "../h/print.hpp"
 void* mem_alloc(size_t size){
     if(size == 0) return nullptr;
-    a1(size)
+    a1((uint64)size)
     a0(MEM_ALLOC)
     ECALL
-    uint64 volatile ret;
+    void *volatile ret;
     __asm__ volatile("mv %0, a0" : "=r" (ret));
-    return (void*)RET
+    return ret;
+    //return (void*)RET
 }
 int mem_free(void *arg){
     a1((uint64)arg)
