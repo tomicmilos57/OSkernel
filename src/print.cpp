@@ -1,12 +1,12 @@
 #include "../h/print.hpp"
-#include "../lib/console.h"
+#include "../h/console.hpp"
 #include "../h/riscv.hpp"
 
 void SprintString(const char *string) {
     uint64 sstatus = Riscv::r_sstatus();
     Riscv::mc_sstatus(Riscv::SSTATUS_SIE);
     while (*string != '\0') {
-        __putc(*string);
+        MyConsole::__putc(*string);
         string++;
     }
     Riscv::ms_sstatus(sstatus & Riscv::SSTATUS_SIE ? Riscv::SSTATUS_SIE : 0);
@@ -34,7 +34,7 @@ void SprintInteger(uint64 in) {
     if (neg)
         buf[i++] = '-';
     while (--i >= 0)
-        __putc(buf[i]);
+        MyConsole::__putc(buf[i]);
     Riscv::ms_sstatus(sstatus & Riscv::SSTATUS_SIE ? Riscv::SSTATUS_SIE : 0);
 }
 void SprintLine(char const *string, uint64 integer){
@@ -47,7 +47,7 @@ void SprintLine(char const *string, uint64 integer){
 
 void UprintString(const char *string) {
     while (*string != '\0') {
-        __putc(*string);
+        MyConsole::__putc(*string);
         string++;
     }
 }
@@ -72,7 +72,7 @@ void UprintInteger(uint64 in) {
     if (neg)
         buf[i++] = '-';
     while (--i >= 0)
-        __putc(buf[i]);
+        MyConsole::__putc(buf[i]);
 }
 void UprintLine(char const *string, uint64 integer){
     UprintString(string);

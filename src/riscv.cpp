@@ -5,6 +5,7 @@
 #include "../h/syscall_cpp.hpp"
 #include "../h/semaphore.hpp"
 #include "../h/memory.hpp"
+#include "../h/console.hpp"
 #define a0(x)                                 \
     __asm__ volatile("mv t0, %0" : : "r"(x)); \
     __asm__ volatile("sw t0, 80(x8)");
@@ -155,11 +156,11 @@ void Riscv::handleSupervisorTrap()
         }
         case GETC:
         {
-            a0((uint64)__getc());
+            a0((uint64)MyConsole::__getc());
             break;
         }
         case PUTC:{
-            __putc((char)a1);
+            MyConsole::__putc((char)a1);
             break;
         }
         }
@@ -203,7 +204,13 @@ void Riscv::handleSupervisorTrap()
     }
     else if (scause == 0x8000000000000009UL)
     { // interrupt, supervisor external interrupt (console)
-        console_handler();
+        //console_handler();
+        int irq = plic_claim();
+        while (*((char*)(CONSOLE_STATUS)) & CONSOLE_RX_STATUS_BIT) {
+            char c = (*(char*)CONSOLE_RX_DATA);
+            MyConsole::putFromKeyboard(c);
+        }
+        plic_complete(irq);
     }
     else
     { // unexpected trap cause
