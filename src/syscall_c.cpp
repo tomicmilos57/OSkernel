@@ -75,20 +75,20 @@ int sem_signal (sem_t volatile id){
 }
 
 int sem_timedwait(sem_t volatile id, time_t volatile timeout){
-    a0(SEM_TIMEDWAIT)
+    a0(SEM_TIMEDWAIT)// !!!!!!!!!!!!!!
     a1((uint64) id)
     a2((uint64) timeout)
     ECALL
     return RET
 }
 int sem_trywait(sem_t volatile id){
-    a0(SEM_TRYWAIT)
+    a0(SEM_TRYWAIT)// !!!!!!!!!!!!!!
     a1((uint64) id)
     ECALL
     return RET
 }
 int time_sleep (time_t volatile time){
-    a1((uint64)time)
+    a1((uint64)time) 
     a0(TIME_SLEEP)
     ECALL
     return RET
@@ -99,7 +99,7 @@ char getc (){
     return (char)RET
 }
 void putc (char volatile c){
-    a0(PUTC)
     a1((uint64)c)
+    a0(PUTC)
     ECALL
 } 

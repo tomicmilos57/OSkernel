@@ -1,8 +1,9 @@
 #include "../h/buffer.hpp"
-#include "../h/print.hpp"
 #include "../h/memory.hpp"
+#include "../h/semaphore.hpp"
+#include "../h/riscv.hpp"
 MyBuffer::MyBuffer(int _cap) : cap(_cap + 1), head(0), tail(0) {
-    buffer = (int *)malloc(sizeof(int) * cap);
+    buffer = (char *)malloc(sizeof(char) * cap);
     itemAvailable = new Semaphore(0);
     spaceAvailable = new Semaphore(_cap);
     mutexHead = new Semaphore(1);
@@ -28,7 +29,7 @@ MyBuffer::~MyBuffer() {
 
 }
 
-void MyBuffer::put(int val) {
+void MyBuffer::tryput(char val) {
     spaceAvailable->wait();
 
     mutexTail->wait();
@@ -37,20 +38,29 @@ void MyBuffer::put(int val) {
     mutexTail->signal();
 
     itemAvailable->signal();
-
 }
 
-int MyBuffer::get() {
+void MyBuffer::put(char val) {
+    spaceAvailable->wait();
+
+    mutexTail->wait();
+    buffer[tail] = val;
+    tail = (tail + 1) % cap;
+    mutexTail->signal();
+
+    itemAvailable->signal();
+}
+
+char MyBuffer::get() {
     itemAvailable->wait();
 
     mutexHead->wait();
 
-    int ret = buffer[head];
+    char ret = buffer[head];
     head = (head + 1) % cap;
     mutexHead->signal();
 
     spaceAvailable->signal();
-
     return ret;
 }
 
@@ -68,6 +78,5 @@ int MyBuffer::getCnt() {
 
     mutexTail->signal();
     mutexHead->signal();
-
     return ret;
 }

@@ -5,20 +5,21 @@
 class MyBuffer {
 private:
     int cap;
-    int *buffer;
+    char *buffer;
     int head, tail;
 
-    Semaphore* spaceAvailable;
-    Semaphore* itemAvailable;
-    Semaphore* mutexHead;
-    Semaphore* mutexTail;
+   Semaphore * spaceAvailable;
+   Semaphore * itemAvailable;
+   Semaphore * mutexHead;
+   Semaphore * mutexTail;
 
 public:
     MyBuffer(int _cap);
     ~MyBuffer();
 
-    void put(int val);
-    int get();
+    void put(char val);
+    void tryput(char val);
+    char get();
 
     int getCnt();
 };

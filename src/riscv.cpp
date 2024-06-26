@@ -206,9 +206,12 @@ void Riscv::handleSupervisorTrap()
     { // interrupt, supervisor external interrupt (console)
         //console_handler();
         int irq = plic_claim();
+        if (irq == CONSOLE_IRQ) {
         while (*((char*)(CONSOLE_STATUS)) & CONSOLE_RX_STATUS_BIT) {
-            char c = (*(char*)CONSOLE_RX_DATA);
-            MyConsole::putFromKeyboard(c);
+           char c = (*(char*)CONSOLE_RX_DATA);
+           //c=c;
+           MyConsole::putFromKeyboard(c);
+        }
         }
         plic_complete(irq);
     }
