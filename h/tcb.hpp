@@ -10,7 +10,8 @@ class TCB
 public:
     using Body = void (*)();
     using Bodyarg = void (*)(void *);
-int timeout = 0;
+    int timeout = 0;
+
 private:
     struct Context
     {
@@ -26,7 +27,7 @@ private:
     uint64 timeSlice;
     bool finished;
     uint64 sleeping = 0;
-    
+
     static uint64 timeSLiceCounter;
     static uint64 constexpr STACK_SIZE = 1024;
     static uint64 constexpr TIME_SLICE = 2;
@@ -37,6 +38,7 @@ public:
     static TCB *createThread(Body body);
     static TCB *createThread(Bodyarg body, void *arg);
     static TCB *createIdleThread(Body body);
+    static TCB *createSuperThread(Body body);
 
     bool isFinished() const { return finished; }
     void setFinished(bool f) { TCB::finished = f; }
@@ -46,7 +48,7 @@ public:
     static void dispatch();
     static void dispatchSleep();
     static void yield();
-    static TCB* getRunning();
+    static TCB *getRunning();
     ~TCB() { delete[] stack; }
 
     static TCB *running;
@@ -83,10 +85,23 @@ private:
                    stack != nullptr ? (uint64)&stack[STACK_SIZE] : 0}),
           timeSlice(timeSlice),
           finished(false) {}
+    TCB(Body body, uint64 timeSlice, char c)
+        : body(body), stack(body != nullptr ? new uint64[STACK_SIZE] : nullptr),
+          context({(uint64)&threadWrapperSuper,
+                   stack != nullptr ? (uint64)&stack[STACK_SIZE] : 0}),
+          timeSlice(timeSlice),
+          finished(false)
+    {
+        if (body != nullptr)
+        {
+            Scheduler::put(this);
+        }
+    }
     friend class Riscv;
     friend class Sem;
     static void threadWrapper();
     static void threadWrapperarg();
+    static void threadWrapperSuper();
     static void contextSwitch(Context *, Context *);
 };
 

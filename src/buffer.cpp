@@ -2,24 +2,27 @@
 #include "../h/memory.hpp"
 #include "../h/semaphore.hpp"
 #include "../h/riscv.hpp"
+#include "../h/console.hpp"
+#include "../h/print.hpp"
+#include "../lib/console.h"
 MyBuffer::MyBuffer(int _cap) : cap(_cap + 1), head(0), tail(0) {
     buffer = (char *)malloc(sizeof(char) * cap);
-    itemAvailable = new Semaphore(0);
-    spaceAvailable = new Semaphore(_cap);
-    mutexHead = new Semaphore(1);
-    mutexTail = new Semaphore(1);
+    itemAvailable = new Sem(0);
+    spaceAvailable = new Sem(_cap);
+    mutexHead = new Sem(1);
+    mutexTail = new Sem(1);
 }
 
 MyBuffer::~MyBuffer() {
-    // Console::putc('\n');
-    // SprintString("Buffer deleted!\n");
-    // while (getCnt()) {
-        // char ch = buffer[head];  
-        // Console::putc(ch);
-        // head = (head + 1) % cap;
-    // }
-    // Console::putc('!');
-    // Console::putc('\n');
+    MyConsole::__putc('\n');
+    SprintString("Buffer deleted!\n");
+    while (getCnt()) {
+        char ch = buffer[head];  
+        MyConsole::__putc(ch);
+        head = (head + 1) % cap;
+    }
+    MyConsole::__putc('!');
+    MyConsole::__putc('\n');
 
     free(buffer);
     delete itemAvailable;
@@ -30,9 +33,9 @@ MyBuffer::~MyBuffer() {
 }
 
 void MyBuffer::tryput(char val) {
-    spaceAvailable->wait();
+    spaceAvailable->trywait();
 
-    mutexTail->wait();
+    mutexTail->trywait();
     buffer[tail] = val;
     tail = (tail + 1) % cap;
     mutexTail->signal();
@@ -40,10 +43,11 @@ void MyBuffer::tryput(char val) {
     itemAvailable->signal();
 }
 
-void MyBuffer::put(char val) {
+void MyBuffer::put(char volatile val) {
     spaceAvailable->wait();
 
     mutexTail->wait();
+    
     buffer[tail] = val;
     tail = (tail + 1) % cap;
     mutexTail->signal();
@@ -57,6 +61,7 @@ char MyBuffer::get() {
     mutexHead->wait();
 
     char ret = buffer[head];
+    //::__putc(ret);
     head = (head + 1) % cap;
     mutexHead->signal();
 

@@ -26,8 +26,8 @@ int main() {
     
     // while(1);
     while(!mymain->isFinished()){thread_dispatch();}
-    //delete mymain; //ERROR
-    //delete mainthread; //ERROR
+    delete mymain; //ERROR
+    delete mainthread; //ERROR
     //SprintString("\nFinished\n");
     return 0;
 }

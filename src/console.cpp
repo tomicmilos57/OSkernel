@@ -1,12 +1,12 @@
 #include "../h/console.hpp"
 #include "../h/tcb.hpp"
-
+#include "../lib/console.h"
 MyBuffer *MyConsole::in;
 MyBuffer *MyConsole::out;
 
 void MyConsole::putFromKeyboard(char c)
 {
-    if(in->getCnt() != 4096) in->put(c);
+    in->tryput(c);
 }
 char MyConsole::__getc()
 {
@@ -19,17 +19,22 @@ void MyConsole::__putc(char c)
 }
 char MyConsole::getToConsole()
 {
-    return out->get();
+    char c = out->get();
+    return c;
 }
-
+#include "../h/riscv.hpp"
 void writeToConsole()
 {
     while (1)
     {
-        while (*((char *)(CONSOLE_STATUS)) & CONSOLE_TX_STATUS_BIT)
+        if (*((char *)(CONSOLE_STATUS)) & CONSOLE_TX_STATUS_BIT)
         {
+            // uint64 sstatus = Riscv::r_sstatus();
+            // Riscv::mc_sstatus(Riscv::SSTATUS_SIE);
             char c = MyConsole::getToConsole();
-            (*(char*)CONSOLE_TX_DATA) = c;
+            (*(char *)CONSOLE_TX_DATA) = c;
+            // ::__putc(c);
+            // Riscv::ms_sstatus(sstatus & Riscv::SSTATUS_SIE ? Riscv::SSTATUS_SIE : 0);
         }
     }
 }
@@ -37,5 +42,5 @@ void MyConsole::initConsole()
 {
     in = new MyBuffer(4096);
     out = new MyBuffer(4096);
-    TCB::createThread(writeToConsole);
+    TCB::createSuperThread(writeToConsole);
 }

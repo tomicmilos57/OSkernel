@@ -8,10 +8,10 @@ private:
     char *buffer;
     int head, tail;
 
-   Semaphore * spaceAvailable;
-   Semaphore * itemAvailable;
-   Semaphore * mutexHead;
-   Semaphore * mutexTail;
+   Sem * spaceAvailable;
+   Sem * itemAvailable;
+   Sem * mutexHead;
+   Sem * mutexTail;
 
 public:
     MyBuffer(int _cap);

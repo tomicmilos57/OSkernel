@@ -8,7 +8,7 @@ uint64 TCB::timeSLiceCounter = 0;
 TCB *TCB::createThread(Body body) { return new TCB(body, TIME_SLICE); }
 TCB *TCB::createThread(Bodyarg body, void* arg){return new TCB(body, arg,  TIME_SLICE);}
 TCB *TCB::createIdleThread(Body body) { return new TCB(body, TIME_SLICE, true); }
-
+TCB *TCB::createSuperThread(Body body){ return new TCB(body, TIME_SLICE, 'S');}
 void TCB::yield() {
     __asm__ volatile("mv a0, %0" : : "r" (0x13)); //calls thread_dispatch()
     __asm__ volatile("ecall");
@@ -44,6 +44,11 @@ void TCB::threadWrapper() {
 void TCB::threadWrapperarg(){
     Riscv::popSppSpie();
     running->bodyarg(running->arg);
+    running->setFinished(true);
+    TCB::yield();
+}
+void TCB::threadWrapperSuper(){
+    running->body();
     running->setFinished(true);
     TCB::yield();
 }
