@@ -54,7 +54,19 @@ void MyBuffer::put(char volatile val) {
 
     itemAvailable->signal();
 }
+char MyBuffer::tryget(){
+    itemAvailable->trywait();
 
+    mutexHead->trywait();
+
+    char ret = buffer[head];
+    //::__putc(ret);
+    head = (head + 1) % cap;
+    mutexHead->signal();
+
+    spaceAvailable->signal();
+    return ret;
+}
 char MyBuffer::get() {
     itemAvailable->wait();
 

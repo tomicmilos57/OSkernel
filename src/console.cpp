@@ -15,28 +15,28 @@ char MyConsole::__getc()
 
 void MyConsole::__putc(char c)
 {
-    out->put(c);
+    out->tryput(c);
 }
 char MyConsole::getToConsole()
 {
-    char c = out->get();
+    char c = out->tryget();
     return c;
 }
 #include "../h/riscv.hpp"
 void writeToConsole()
 {
+    uint64 sstatus = Riscv::r_sstatus();
+    Riscv::mc_sstatus(Riscv::SSTATUS_SIE);
     while (1)
     {
         if (*((char *)(CONSOLE_STATUS)) & CONSOLE_TX_STATUS_BIT)
         {
-            // uint64 sstatus = Riscv::r_sstatus();
-            // Riscv::mc_sstatus(Riscv::SSTATUS_SIE);
             char c = MyConsole::getToConsole();
             (*(char *)CONSOLE_TX_DATA) = c;
             // ::__putc(c);
-            // Riscv::ms_sstatus(sstatus & Riscv::SSTATUS_SIE ? Riscv::SSTATUS_SIE : 0);
         }
     }
+    Riscv::ms_sstatus(sstatus & Riscv::SSTATUS_SIE ? Riscv::SSTATUS_SIE : 0);
 }
 void MyConsole::initConsole()
 {

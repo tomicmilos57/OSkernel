@@ -112,7 +112,7 @@ void Riscv::handleSupervisorTrap()
                 break;
             }
             a0(handle->signal())
-            //break; //after signal -> go to dispatch
+            break; //after signal -> go to dispatch
         }
         case THREAD_DISPATCH:
         {

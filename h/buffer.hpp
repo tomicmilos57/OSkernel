@@ -20,7 +20,7 @@ public:
     void put(char val);
     void tryput(char val);
     char get();
-
+    char tryget();
     int getCnt();
 };
 
