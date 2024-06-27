@@ -8,7 +8,7 @@ private:
     int val;
     List<TCB> blockedQueue;
 protected:
-    void block();
+    int block();
     void unblock();
     void putBlock(TCB *tcb);
     TCB *getBlock();

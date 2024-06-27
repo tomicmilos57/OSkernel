@@ -51,3 +51,17 @@ int Semaphore::timedWait(time_t time){ return sem_timedwait(myHandle, time); }
 int Semaphore::tryWait(){ return sem_trywait(myHandle); }
 char Console::getc() { return ::getc(); }
 void Console::putc(char c) { ::putc(c); } //Potencijalno problem ako se syscall_c.cpp preimenuje u syscall_c.c
+
+PeriodicThread::PeriodicThread(time_t period) : period(period) {}
+
+void PeriodicThread::run(){
+    while (period)
+    {
+        time_sleep(period);
+        periodicActivation();
+    }
+    
+}
+void PeriodicThread::terminate(){
+    period = 0;
+}

@@ -46,6 +46,7 @@ protected:
     virtual void periodicActivation() {}
 
 private:
+    virtual void run();
     time_t period;
 };
 class Console

@@ -2,21 +2,40 @@
 #include "../h/syscall_cpp.hpp"
 #include "printing.hpp"
 
+sem_t sem;
+void f(void* arg){
+    printString("ASD\n");
+    time_sleep(5);
+    sem_close(sem);
+    printString("ASD\n");
+}
+class Test : public PeriodicThread{
+    public:
+    Test(time_t t) : PeriodicThread(t) {}
+    void periodicActivation() override{
+        printString("SAD\n");
+    }
+};
 #define NUM 10
 void randomTest(){
     printString("Test9\n");
-    sem_t arr[NUM];
-    for (int i = 0; i < NUM; i++)
-    {
-        sem_open(&arr[i], 1);
-    }
-    for (int i = NUM-1; i >= 0; i--)
-    {
-        sem_close(arr[i]);
-    }
-    sem_t sem;
-    sem_open(&sem, 0);
+    Test *pt = new Test(10);
+    pt->start();
 
-    sem_timedwait(sem, 10);
+    time_sleep(200);
+    printString("Terminating\n");
+    pt->terminate();
+    while(1);
+    /*thread_t t;
+    thread_create(&t, f, sem);
+
+    sem_open(&sem,0);
+
+    int ret = sem_wait(sem);
+    if(ret == -1){
+    printString("ret ");
+    printInt(ret);
+    printString("\n");
+    }*/
     printString("GG\n");
 }

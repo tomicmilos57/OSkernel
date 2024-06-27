@@ -179,8 +179,10 @@ void Riscv::handleSupervisorTrap()
             elem->sleeping--;
             if (elem->sleeping > 0)
                 Scheduler::putSleep(elem);
-            else
+            else{
+                elem->sleeping = 0;
                 Scheduler::put(elem);
+            }
         }
         Scheduler::wakeUpSleepingSemaphores();
 

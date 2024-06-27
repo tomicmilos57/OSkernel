@@ -7,7 +7,7 @@
 void Sem::putBlock(TCB *tcb){blockedQueue.addLast(tcb);}
 TCB *Sem::getBlock(){return blockedQueue.removeFirst();}
 
-void Sem::block(){
+int Sem::block(){
     TCB *old = TCB::running;
 
     putBlock(old);
@@ -16,6 +16,7 @@ void Sem::block(){
     TCB::running = Scheduler::get();
 
     TCB::contextSwitch(&old->context, &TCB::running->context);
+    return 0;
 }
 void Sem::unblock(){
     TCB* blocked = getBlock();
@@ -43,8 +44,8 @@ int Sem::wait(){
     return 0;
 }
 int Sem::trywait(){
-    if(--val < 0) block();//return value?
-    return 0;
+    if(--val < 0) return block();//return value?
+    return 1;
 }
 #include "../h/print.hpp"
 int Sem::timedwait(time_t timeout){
