@@ -1,7 +1,7 @@
 #ifndef Semaphore_hpp
 #define Semaphore_hpp
 #include "../lib/hw.h"
-#include "../h/list.hpp"
+#include "list.hpp"
 class TCB;
 class Sem{
 private:
@@ -16,8 +16,7 @@ public:
     Sem(int init = 1) : val(init) {}
     int value() const { return val; } //maybe unnecessary
     ~Sem() = default;
-    //TCB* current;
-    //int sem_open(int init);
+
     int close();
     int wait();
     int signal();

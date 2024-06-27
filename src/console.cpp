@@ -1,6 +1,6 @@
 #include "../h/console.hpp"
 #include "../h/tcb.hpp"
-#include "../lib/console.h"
+#include "../h/riscv.hpp"
 MyBuffer *MyConsole::in;
 MyBuffer *MyConsole::out;
 
@@ -22,7 +22,7 @@ char MyConsole::getToConsole()
     char c = out->tryget();
     return c;
 }
-#include "../h/riscv.hpp"
+
 void writeToConsole()
 {
     uint64 sstatus = Riscv::r_sstatus();
@@ -33,7 +33,6 @@ void writeToConsole()
         {
             char c = MyConsole::getToConsole();
             (*(char *)CONSOLE_TX_DATA) = c;
-            // ::__putc(c);
         }
     }
     Riscv::ms_sstatus(sstatus & Riscv::SSTATUS_SIE ? Riscv::SSTATUS_SIE : 0);

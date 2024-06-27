@@ -18,7 +18,6 @@ public:
   List() : head(0), tail(0) {}
   List(const List<T> &) = delete;
   List<T> &operator=(const List<T> &) = delete;
-  uint64 getNumOfElem(){ return n; }
   void addFirst(T *data) {
     Elem *elem = new Elem(data, head);
     head = elem;
@@ -99,19 +98,7 @@ public:
   T *getCurrent(){
     return iter->data;
   }
-  T *removeCurrent(){
-    Elem* find;
-    if(iter == head) {index--; iter = head->next; return removeFirst();}
-    if(iter == tail) {index--; iter = nullptr; return removeLast();}
-    for(find = head; find->next != iter; find = find->next);
-    find->next = iter->next;
-    T *ret = iter->data;
-    //delete iter;
-    iter = find;
-    index--;
-    n--;
-    return ret;
-  }
+
 };
 
 #endif

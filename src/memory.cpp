@@ -1,5 +1,4 @@
 #include "../h/memory.hpp"
-#include "../lib/hw.h"
 int NumOfBlocks; 
 int *memMap;     
 uint64 actualStart;
@@ -11,7 +10,6 @@ void initmem()
     for (int i = 0; i < NumOfBlocks; i++)
         memMap[i] = 0;
     memMap[0] = NumOfBlocks;
-    // SprintLine("NumofBlcok: ", NumOfBlocks);
 }
 int abs(int x) { return x < 0 ? -x : x; }
 int nots(int volatile x) { return -x;}
@@ -49,7 +47,7 @@ int free(void* adr){
     for (i = index - 1; i > 0; i--)
     {
         if(memMap[i] != 0)break;
-    } //UprintLine("i: ", i);
+    } 
     
     if(memMap[i] > 0) {
         memMap[i] += abs(memMap[index]);

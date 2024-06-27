@@ -1,13 +1,10 @@
 #include "../h/tcb.hpp"
-#include "../h/print.hpp"
-#include "../h/workers.hpp"
 #include "../h/riscv.hpp"
-#include "../h/syscall_c.h"
 #include "../h/memory.hpp"
 #include "../h/console.hpp"
 extern void userMain();
-void empty(){ while(1){SprintString("Idle\n");} }
-void next(){ putc('c');}
+void empty(){ while(1){} }
+
 
 int main() {
     initmem();
@@ -22,12 +19,9 @@ int main() {
     Scheduler::idle = TCB::createIdleThread(empty);
     
     TCB* mymain = TCB::createThread(userMain);
-
     
-    // while(1);
     while(!mymain->isFinished()){thread_dispatch();}
-    delete mymain; //ERROR
-    delete mainthread; //ERROR
-    //SprintString("\nFinished\n");
+    delete mymain; 
+    delete mainthread; 
     return 0;
 }

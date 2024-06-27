@@ -1,10 +1,7 @@
 #include "../h/buffer.hpp"
 #include "../h/memory.hpp"
 #include "../h/semaphore.hpp"
-#include "../h/riscv.hpp"
 #include "../h/console.hpp"
-#include "../h/print.hpp"
-#include "../lib/console.h"
 MyBuffer::MyBuffer(int _cap) : cap(_cap + 1), head(0), tail(0) {
     buffer = (char *)malloc(sizeof(char) * cap);
     itemAvailable = new Sem(0);
@@ -15,14 +12,14 @@ MyBuffer::MyBuffer(int _cap) : cap(_cap + 1), head(0), tail(0) {
 
 MyBuffer::~MyBuffer() {
     MyConsole::__putc('\n');
-    SprintString("Buffer deleted!\n");
+    // SprintString("Buffer deleted!\n");
     while (getCnt()) {
         char ch = buffer[head];  
         MyConsole::__putc(ch);
         head = (head + 1) % cap;
     }
-    MyConsole::__putc('!');
-    MyConsole::__putc('\n');
+    // MyConsole::__putc('!');
+    // MyConsole::__putc('\n');
 
     free(buffer);
     delete itemAvailable;
@@ -35,10 +32,10 @@ MyBuffer::~MyBuffer() {
 void MyBuffer::tryput(char val) {
     spaceAvailable->trywait();
 
-    mutexTail->trywait();
+    // mutexTail->trywait();
     buffer[tail] = val;
     tail = (tail + 1) % cap;
-    mutexTail->signal();
+    // mutexTail->signal();
 
     itemAvailable->signal();
 }
@@ -46,23 +43,22 @@ void MyBuffer::tryput(char val) {
 void MyBuffer::put(char volatile val) {
     spaceAvailable->wait();
 
-    mutexTail->wait();
+    // mutexTail->wait();
     
     buffer[tail] = val;
     tail = (tail + 1) % cap;
-    mutexTail->signal();
+    // mutexTail->signal();
 
     itemAvailable->signal();
 }
 char MyBuffer::tryget(){
     itemAvailable->trywait();
 
-    mutexHead->trywait();
+    // mutexHead->trywait();
 
     char ret = buffer[head];
-    //::__putc(ret);
     head = (head + 1) % cap;
-    mutexHead->signal();
+    // mutexHead->signal();
 
     spaceAvailable->signal();
     return ret;
@@ -70,12 +66,11 @@ char MyBuffer::tryget(){
 char MyBuffer::get() {
     itemAvailable->wait();
 
-    mutexHead->wait();
+    // mutexHead->wait();
 
     char ret = buffer[head];
-    //::__putc(ret);
     head = (head + 1) % cap;
-    mutexHead->signal();
+    // mutexHead->signal();
 
     spaceAvailable->signal();
     return ret;
@@ -84,8 +79,8 @@ char MyBuffer::get() {
 int MyBuffer::getCnt() {
     int ret;
 
-    mutexHead->wait();
-    mutexTail->wait();
+    // mutexHead->wait();
+    // mutexTail->wait();
 
     if (tail >= head) {
         ret = tail - head;
@@ -93,7 +88,7 @@ int MyBuffer::getCnt() {
         ret = cap - head + tail;
     }
 
-    mutexTail->signal();
-    mutexHead->signal();
+    // mutexTail->signal();
+    // mutexHead->signal();
     return ret;
 }

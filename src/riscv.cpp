@@ -1,8 +1,6 @@
 #include "../h/riscv.hpp"
-#include "../lib/console.h"
 #include "../h/tcb.hpp"
 #include "../h/print.hpp"
-#include "../h/syscall_cpp.hpp"
 #include "../h/semaphore.hpp"
 #include "../h/memory.hpp"
 #include "../h/console.hpp"
@@ -13,31 +11,24 @@ void Riscv::popSppSpie()
 {
     Riscv::S = false;
     __asm__ volatile("csrw sepc, ra");
-    mc_sstatus(SSTATUS_SPP); // clear sstatus na nulu tj spp
+    mc_sstatus(SSTATUS_SPP);
     __asm__ volatile("sret");
 }
-#include "../lib/mem.h"
 bool Riscv::S;
 void Riscv::handleSupervisorTrap()
 {
     S = true;
     uint64 scause = r_scause();
-
-        uint64 volatile code, a1, a2, a3, a4;
-        __asm__ volatile("mv %[code], a0" : [code] "=r"(code));
-        __asm__ volatile("mv %[a1], a1" : [a1] "=r"(a1));
-        __asm__ volatile("mv %[a2], a2" : [a2] "=r"(a2));
-        __asm__ volatile("mv %[a3], a3" : [a3] "=r"(a3));
-        __asm__ volatile("mv %[a4], a4" : [a4] "=r"(a4));
+    uint64 volatile code, a1, a2, a3, a4;
+    __asm__ volatile("mv %[code], a0" : [code] "=r"(code));
+    __asm__ volatile("mv %[a1], a1" : [a1] "=r"(a1));
+    __asm__ volatile("mv %[a2], a2" : [a2] "=r"(a2));
+    __asm__ volatile("mv %[a3], a3" : [a3] "=r"(a3));
+    __asm__ volatile("mv %[a4], a4" : [a4] "=r"(a4));
     if (scause == 0x0000000000000009UL || scause == 0x0000000000000008UL)
     {                                        // ecall
-        
         uint64 volatile sepc = r_sepc() + 4; // ecall return to its address
         uint64 volatile sstatus = r_sstatus();
-        
-
-
-
         switch (code)
         {
         case MEM_ALLOC:
@@ -52,14 +43,8 @@ void Riscv::handleSupervisorTrap()
         }
         case THREAD_CREATE:
         {
-            //SprintLine("Arg Ptr: ", (uint64)a3);
-            //SprintLine("Start Routine: ", (uint64)a2);
-            //SprintLine("Handle: ", (uint64)a1);
             TCB* volatile val = TCB::createThread((void(*)(void*))a2, (void*)a3);
-            //SprintLine("Created Thr with handle: ", (uint64)val);
-            
             (*(thread_t**)a1) = (thread_t*)val;
-            //a0((uint64)val)
             if(val){a0(0)}
             else {a0(-1)}
             break;
@@ -73,11 +58,8 @@ void Riscv::handleSupervisorTrap()
 
         case SEM_OPEN:
         {
-            //SprintLine("Handle S MODE: ", a1);
-            //SprintLine("Init S MODE: ", a2);
             Sem **handle = (Sem**)a1;
-            Sem *semaphore = new Sem(a2);//should a2 be unsigned or uint64?
-            //(*(thread_t**)a1) = (thread_t*)val;
+            Sem *semaphore = new Sem(a2);
             if(semaphore == nullptr) a0(-1);
             
             *handle = semaphore;
@@ -130,7 +112,7 @@ void Riscv::handleSupervisorTrap()
             w_sepc(sepc_yield);
             break;
         }
-        case SEM_TIMEDWAIT://sleeping = a2;
+        case SEM_TIMEDWAIT:
         {
             Sem* handle = (Sem*)a1;
             uint64 timeout = a2;
@@ -199,15 +181,13 @@ void Riscv::handleSupervisorTrap()
     }
     else if (scause == 0x8000000000000009UL)
     { // interrupt, supervisor external interrupt (console)
-        //console_handler();
+        
         int irq = plic_claim();
-        // if (irq == CONSOLE_IRQ) {
+        
         while (*((char*)(CONSOLE_STATUS)) & CONSOLE_RX_STATUS_BIT) {
            char c = (*(char*)CONSOLE_RX_DATA);
-           //c=c;
            MyConsole::putFromKeyboard(c);
         }
-        // }
         plic_complete(irq);
     }
     else

@@ -33,7 +33,7 @@ private:
     static uint64 constexpr TIME_SLICE = 2;
 
 public:
-    // using Body = void (*)();
+    
 
     static TCB *createThread(Body body);
     static TCB *createThread(Bodyarg body, void *arg);

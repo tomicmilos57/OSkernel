@@ -2,8 +2,6 @@
 #define memory_hpp
 #include "../lib/hw.h"
 // K1 Mart 2024
-
-
 void initmem();
 
 int alloc(int size);

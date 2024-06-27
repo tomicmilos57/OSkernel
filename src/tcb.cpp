@@ -19,7 +19,7 @@ void TCB::dispatch() {
 
     if (!old->isFinished()) {
         Scheduler::put(old);
-    }//else delete old ?
+    }else delete old; //?
     running = Scheduler::get();
     TCB::contextSwitch(&old->context, &running->context);
 }
@@ -53,7 +53,7 @@ void TCB::threadWrapperSuper(){
     TCB::yield();
 }
 void TCB::thread_exit(){
-    running->setFinished(true); // Also can running = Scheduler::get(); TCB::contextSwitch...;
+    running->setFinished(true); 
     TCB::yield();
 }
 
