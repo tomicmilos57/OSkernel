@@ -11,7 +11,7 @@ void next(){ putc('c');}
 
 int main() {
     initmem();
-    
+    Riscv::S = true;
     Riscv::ms_sstatus(Riscv::SSTATUS_SIE);
     Riscv::w_stvec((uint64) &Riscv::supervisorTrap);
     MyConsole::initConsole();

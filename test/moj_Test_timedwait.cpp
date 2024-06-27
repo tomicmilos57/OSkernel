@@ -42,7 +42,7 @@ void mojTestTimedwait() {
     waitForAll = new Semaphore(1);
     printString("Test8\n");
     for(int i=0; i<NUM; i++) {
-        threads[i] = new ModifikacijaThread(i+1, waitForAll);
+        threads[i] = new ModifikacijaThread(i+10, waitForAll);
     }
     for(int i=0; i<NUM; i++) {
         threads[i]->start();

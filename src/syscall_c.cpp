@@ -1,5 +1,6 @@
 #include "../h/syscall_c.h"
 #include "../h/riscv.hpp"
+#include "../h/memory.hpp"
 #define ECALL __asm__ volatile("ecall");
 #define a0(x) __asm__ volatile("mv a0, %0" : : "r" (x));
 #define a1(x) __asm__ volatile("mv a1, %0" : : "r" (x));
@@ -8,17 +9,17 @@
 #define a4(x) __asm__ volatile("mv a4, %0" : : "r" (x));
 #define RET Riscv::read_ret();
 #include "../h/print.hpp"
+#include "../h/console.hpp"
 void* mem_alloc(size_t size){
     if(size == 0) return nullptr;
+    if(Riscv::S) return malloc(size);
     a1((uint64)size)
     a0(MEM_ALLOC)
     ECALL
-    void *volatile ret;
-    __asm__ volatile("mv %0, a0" : "=r" (ret));
-    return ret;
-    //return (void*)RET
+    return (void*)RET
 }
 int mem_free(void *arg){
+    if(Riscv::S) return free(arg);
     a1((uint64)arg)
     a0(MEM_FREE)
     ECALL

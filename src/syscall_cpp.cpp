@@ -2,15 +2,29 @@
 #include "../lib/mem.h"
 #include "../h/memory.hpp"
 #include "../h/print.hpp"
+#include "../h/riscv.hpp"
 void *operator new(size_t n) { 
-    //uint64 volatile ra;
-    //__asm__ volatile("mv %[ra], ra" : [ra] "=r"(ra));
-    //UprintString("KAKO\n");
-    return malloc(n);
-    /*__mem_alloc(n);*/ } // C call mem alloc?
-void *operator new[](size_t n) { return malloc(n);/*__mem_alloc(n);*/ }
-void operator delete(void *n) { free(n);/*mem_free(n);*/ }
-void operator delete[](void *n) { free(n);/*mem_free(n);*/ }
+        if(Riscv::S) return malloc(n);
+        return mem_alloc(n);
+    } 
+void *operator new[](size_t n) { 
+        if(Riscv::S) return malloc(n);
+        return mem_alloc(n); 
+    }
+void operator delete(void *n) { 
+        if(Riscv::S) {
+            free(n);
+            return;
+        }
+        mem_free(n); 
+    }
+void operator delete[](void *n) { 
+        if(Riscv::S) {
+            free(n);
+            return;
+        }
+        mem_free(n); 
+    }
 Thread::Thread(void (*body)(void *), void *arg) : body(body), arg(arg) {}
 Thread::Thread()
 {

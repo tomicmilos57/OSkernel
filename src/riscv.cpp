@@ -11,13 +11,16 @@
     __asm__ volatile("sw t0, 80(x8)");
 void Riscv::popSppSpie()
 {
+    Riscv::S = false;
     __asm__ volatile("csrw sepc, ra");
     mc_sstatus(SSTATUS_SPP); // clear sstatus na nulu tj spp
     __asm__ volatile("sret");
 }
 #include "../lib/mem.h"
+bool Riscv::S;
 void Riscv::handleSupervisorTrap()
 {
+    S = true;
     uint64 scause = r_scause();
 
         uint64 volatile code, a1, a2, a3, a4;
@@ -90,7 +93,7 @@ void Riscv::handleSupervisorTrap()
                 break;
             }
             Scheduler::removeSemaphore(handle);
-            SprintLine("Num of Semaphores: ", Scheduler::getSemaphoresNumber());
+            //SprintLine("Num of Semaphores: ", Scheduler::getSemaphoresNumber());
             a0(0)
             break;
         }
@@ -112,11 +115,11 @@ void Riscv::handleSupervisorTrap()
                 break;
             }
             a0(handle->signal())
-            break; //after signal -> go to dispatch
+            //break; //after signal -> go to dispatch
         }
         case THREAD_DISPATCH:
         {
-            uint64 volatile sepc_yield = r_sepc() + 4; // ecall return to its address
+            uint64 volatile sepc_yield = r_sepc() + 4; 
             uint64 volatile sstatus_yield = r_sstatus();
             TCB::timeSLiceCounter = 0;
             if (TCB::running->sleeping > 0)
@@ -170,7 +173,7 @@ void Riscv::handleSupervisorTrap()
     else if (scause == 0x8000000000000001UL)
     { // interrupt, supervisor software interrupt (timer)
         TCB::timeSLiceCounter++;
-        for (uint64 i = 0; i < Scheduler::getNumOfSleep(); i++) // This won't work if Scheduler is not queue
+        for (uint64 i = 0; i < Scheduler::getNumOfSleep(); i++) 
         {                                                       
             TCB *elem = Scheduler::getSleep();
             elem->sleeping--;
@@ -180,17 +183,7 @@ void Riscv::handleSupervisorTrap()
                 Scheduler::put(elem);
         }
         Scheduler::wakeUpSleepingSemaphores();
-        //for (uint64 i = 0; i < Scheduler::getNumSemSleep(); i++) 
-        //{                                                       
-        //    TCB *elem = Scheduler::getSemSleep();
-        //    elem->sleeping--;
-        //    if (elem->sleeping > 0)
-        //        Scheduler::putSemSleep(elem);
-        //    else{
-        //        //remove from blocked
-        //        Scheduler::put(elem);
-        //    }
-        //}
+
         if (TCB::timeSLiceCounter >= TCB::running->getTimeSlice())
         {
             uint64 volatile sepc = r_sepc();
@@ -217,6 +210,7 @@ void Riscv::handleSupervisorTrap()
     }
     else
     { // unexpected trap cause
+        
         SprintString("Unexpected trap cause\n");
         // print scause
         SprintLine("Scause: ", r_scause());
@@ -224,7 +218,9 @@ void Riscv::handleSupervisorTrap()
         SprintLine("Sepc: ", r_sepc());
         // print stval
         SprintLine("Stval: ", r_stval());
-        while(1);
+        
+        // while(1);
         //TCB::time_sleep(1000);
     }
+    S = false;
 }

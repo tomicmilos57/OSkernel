@@ -70,6 +70,8 @@ public:
     static void supervisorTrap();
 
     static uint64 read_ret();
+    
+    static bool S;
 private:
     static void handleSupervisorTrap();
 };
