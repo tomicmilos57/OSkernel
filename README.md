@@ -13,3 +13,10 @@ The kernel is designed to be a library such that the user application and the ke
 - Preemption and Time Sharing: Support for time-sharing and context switching.
 - Asynchronous Context Switching: Triggered by timer and keyboard interrupts.
 - RISC-V Architecture: Implemented for RISC-V processor architecture and simulated in a virtual environment.
+
+### Time-sharing, context switching and thread sleep.
+![Test5](https://github.com/tomicmilos57/OSkernel/assets/144954915/85cefcc7-7085-4c65-af4f-8ed82c0d1204)
+
+### Semaphores for synchronization between threads
+![slika](https://github.com/tomicmilos57/OSkernel/assets/144954915/c957c6ce-c68e-4f7a-88d1-ef130960fd05)
+
